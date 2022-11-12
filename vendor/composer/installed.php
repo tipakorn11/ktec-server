@@ -1,11 +1,11 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
+        'reference' => 'c00b8e12987f55549c7f5357815416e5ddae312c',
         'name' => 'slim/slim-skeleton',
         'dev' => true,
     ),
@@ -338,12 +338,12 @@
             'dev_requirement' => false,
         ),
         'slim/slim-skeleton' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => NULL,
+            'reference' => 'c00b8e12987f55549c7f5357815416e5ddae312c',
             'dev_requirement' => false,
         ),
         'symfony/polyfill-ctype' => array(
