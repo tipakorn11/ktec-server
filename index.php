@@ -2,7 +2,7 @@
 // # use Namespaces for HTTP request
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-//ini_set('display_errors', false);
+ini_set('display_errors', false);
 // # include the Slim framework
 date_default_timezone_set("UTC");
 require 'vendor/autoload.php';
@@ -31,6 +31,8 @@ $app->add(function ($req, $res, $next) {
 
 
 require 'src/routers/user.route.php';
+require 'src/JwtHandler.php';
+
 //echo json_encode($token);
 // # create your First Route
 

@@ -1,7 +1,7 @@
 <?php
 class UserModel
 {
-    //แสดงข้อมูลอาคาร
+    //แสดงผู้ใช้
     public function getUserBy($data)
     {
         try {
@@ -22,12 +22,12 @@ class UserModel
             $query = $db->query($sql);
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
-
-            if(isset($data['params']['pagination'])){
-                $sql .= " LIMIT ".($data['params']['pagination']['current']* $data['params']['pagination']['pageSize'] - $data['params']['pagination']['pageSize']).",".($data['params']['pagination']['pageSize'])."";
-            }
-            $query = $db->query($sql);
-            $result = $query->fetchAll(PDO::FETCH_OBJ);
+            echo $data;
+            // if(isset($data['params']['pagination'])){
+            //     $sql .= " LIMIT ".($data['params']['pagination']['current']* $data['params']['pagination']['pageSize'] - $data['params']['pagination']['pageSize']).",".($data['params']['pagination']['pageSize'])."";
+            // }
+            // $query = $db->query($sql);
+            // $result = $query->fetchAll(PDO::FETCH_OBJ);
             $db = null;
             if (!$result) {
                 return ['data' => [], 'require' => false];
@@ -39,95 +39,99 @@ class UserModel
             return ['data' => [], 'require' => false];
         }
     }
-    //แสดงข้อมูลอาคารเฉพาะอาคารที่ต้องการ
-    public function getBuildingByID($data){
+    //logging in 
+    public function auth($data)
+    {
         try {
-            // Get DB Object
-            $db = new db();
-            // connect to DB
-            $db = $db->connect();
-            // query
-            $sql = $db->prepare("SELECT * FROM building WHERE building_id = :building_id");
-            $sql->bindParam(':building_id',$data['building_id']);
-            $sql->execute();
-            $result = $sql->fetchAll(PDO::FETCH_OBJ);
-            $db = null;
-            if (!$result) {
-                return ['data' => [], 'require' => false];
-            } else {
-                return ['data' => $result, 'require' => true];
-            }
-        } catch (PDOException $e) {
-            $db = null;
-            return ['data' => [], 'require' => false];
+            $jwt = new JwtHandler();
+            $decode = $jwt->isAuth($data);
+            
+            return $decode;
+        } catch (\Exception $e) {
+            // show error message as Json format
+            echo '{"error": {"msg": ' . $e->getMessage() . '}';
         }
     }
-    //เพิ่มข้อมูลอาคาร
-    public function insertBuilding($data){
+
+    public function checkLogin($data)
+    {
         try {
             // Get DB Object
             $db = new db();
             // connect to DB
             $db = $db->connect();
+            $pass = password_hash('123456',PASSWORD_DEFAULT);
+            $pass1 = password_hash('123456',PASSWORD_DEFAULT);
+            echo $pass .'                     '.$pass1;
+
             // query
-            $sql = $db->prepare("INSERT INTO building (`building_id`,`building_name`) VALUES (:building_id,:building_name)");
-            $sql->bindParam(':building_id',$data['building_id']);
-            $sql->bindParam(':building_name',$data['building_name']);
+            $password = md5($data['password']);
+            $sql = $db->prepare("SELECT * FROM user WHERE username = :username AND password = :pass");
+            $sql->bindParam(':username',$data['username']);
+            $sql->bindParam(':pass',$password);
             $sql->execute();
+            $user = $sql->fetchAll(PDO::FETCH_OBJ);
+            if (!$user) {
+                $db = null;
+                return ['data' => [], 'require' => false];
+            }else{
+                $jwt = new JwtHandler();
+                $token = $jwt->_jwt_encode_data("http://localhost/ktec-Server/public/", array("id" => $user[0]->username));
+                $sql = $db->prepare("SELECT *,
+                IFNULL((SELECT position_name FROM position WHERE position.positionID = user_position.positionID),user_position.positionID)AS position_name
+                            FROM ktec.user_position 
+                            WHERE personalID =(
+                            select personalID FROM user where username = :username
+                            ) ");
+                $sql->bindParam(':username',$user[0]->username);
+                $sql->execute();
+                $position = $sql->fetchAll(PDO::FETCH_OBJ);
+                
+
+
+            }
+            
+               return ['data' =>$user,'require' => true , 'token' => $token ];
+        } catch (PDOException $e) {
+            // show error message as Json format
+            $db = null;
+            return [ 'data' => [], 'require' => false];
+        }
+    }
+    public function insertUser($data)
+    {
+        try {
+
+            // Get DB Object
+            $db = new db();
+            // connect to DB
+            $db = $db->connect();
+            // query
+            $password = md5($data['password']);
+            //echo $password;
+            $sql = $db->prepare("INSERT INTO user (`personalID`,`username`,`password`) VALUES (:personalID,:username,:pass)");
+            $sql->bindParam(':personalID', $data['personalID']);
+            $sql->bindParam(':username', $data['username']);
+            $sql->bindParam(':pass', $password);
+           
+            $sql->execute();
+
             $db = null;
             if (!$sql) {
+
                 return ['data' => [], 'require' => false];
             } else {
+
                 return ['data' => [], 'require' => true];
             }
         } catch (PDOException $e) {
             $db = null;
+            echo $e->getMessage();
             return ['data' => [], 'require' => false];
+
         }
     }
-    //แก้ไขข้อมูลอาคาร
-    public function updateBuilding($data){
-        try {
-            // Get DB Object
-            $db = new db();
-            // connect to DB
-            $db = $db->connect();
-            // query
-            $sql = $db->prepare("UPDATE building SET building_name=:building_name WHERE building_id=:building_id");
-            $sql->bindParam(':building_id',$data['building_id']);
-            $sql->bindParam(':building_name',$data['building_name']);
-            $sql->execute();
-            $db = null;
-            if (!$sql) {
-                return ['data' => [], 'require' => false];
-            } else {
-                return ['data' => [], 'require' => true];
-            }
-        } catch (PDOException $e) {
-            $db = null;
-            return ['data' => [], 'require' => false];
-        }
-    }
-    //ลบข้อมูลอาคาร
-    public function deleteBuilding($data){
-        try {
-            // Get DB Object
-            $db = new db();
-            // connect to DB
-            $db = $db->connect();
-            // query
-            $sql = $db->prepare("DELETE FROM building WHERE building_id = :building_id");
-            $sql->bindParam(':building_id',$data['building_id']);
-            $sql->execute();
-            $db = null;
-            if (!$sql) {
-                return ['data' => [], 'require' => false];
-            } else {
-                return ['data' => [], 'require' => true];
-            }
-        } catch (PDOException $e) {
-            $db = null;
-            return ['data' => [], 'require' => false];
-        }
-    }
+
+    
+
 }
