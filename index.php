@@ -29,7 +29,7 @@ $app->add(function ($req, $res, $next) {
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
-
+require 'src/routers/news.route.php';
 require 'src/routers/user.route.php';
 require 'src/JwtHandler.php';
 

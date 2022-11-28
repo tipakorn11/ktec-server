@@ -60,10 +60,7 @@ class UserModel
             $db = new db();
             // connect to DB
             $db = $db->connect();
-            $pass = password_hash('123456',PASSWORD_DEFAULT);
-            $pass1 = password_hash('123456',PASSWORD_DEFAULT);
-            echo $pass .'                     '.$pass1;
-
+           
             // query
             $password = md5($data['password']);
             $sql = $db->prepare("SELECT * FROM user WHERE username = :username AND password = :pass");

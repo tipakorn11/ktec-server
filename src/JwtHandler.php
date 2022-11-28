@@ -88,6 +88,7 @@ class JwtHandler
         try {
             $jwt = new JwtHandler();
             $decode = $jwt->_jwt_decode_data($data);
+            // print_r($decode);
             if($decode['auth']){
                 if($this->fetchUser($decode['data']->id)){
                     return $decode;   

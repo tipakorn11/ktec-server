@@ -1,30 +1,31 @@
 <?php
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-require './src/controllers/user.controller.php';
-$app->post('/user/getUserBy', function (Request $request, Response $response) {
+require './src/controllers/news.controller.php';
+$app->post('/news/getNewsBy', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
-    $user = new userController();
-    echo json_encode($user->getUserBy($data));
+    $news = new NewsController();
+    echo json_encode($news->getNewsBy($data));
 });
-
-$app->post('/user/auth', function (Request $request, Response $response) {
-    $token = $request->getHeaderLine('x-access-token');
-    // pass token 
+$app->post('/news/getNewsByid', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $user = new userController();
-    echo json_encode($user->auth($token));
+    $news = new NewsController();
+    echo json_encode($news->getNewsByid($data));
 });
-
-$app->post('/user/checkLogin', function (Request $request, Slim\Http\Response $response) {
+$app->post('/news/insertNews', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $user = new UserController();
-    echo json_encode($user->checkLogin($data));
+    $news = new NewsController();
+    echo json_encode($news->insertNews($data));
 });
-$app->post('/user/insertUser', function (Request $request, Response $response) {
+$app->post('/news/updateNews', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $user = new UserController();
-    echo json_encode($user->insertUser($data));
+    $news = new NewsController();
+    echo json_encode($news->insertNews($data));
+});
+$app->post('/news/deleteNewsByid', function (Request $request,Response $response) {
+    $data = $request->getParsedBody();
+    $news = new NewsController();
+    echo json_encode($news->deleteNewsByid($data));
 });
 
 // $app->post('/user/getUserByID', function (Request $request, Response $response) {

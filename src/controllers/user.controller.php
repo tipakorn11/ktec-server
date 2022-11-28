@@ -3,13 +3,15 @@ require './src/models/user.model.php';
 
 class UserController {
     public function getUserBy($data){
-        $user = new UserModel();
-        return $user->getUserBy($data);
+        $user_model = new UserModel();
+        return $user_model->getUserBy($data);
     }
+    
     public function auth($data){
-        $user = new UserModel();
-        return $user->auth($data);
+        $user_model = new UserModel();
+        return $user_model->auth($data);
     }
+
     public function checkLogin($data)
     {
         $user_model = new UserModel();
