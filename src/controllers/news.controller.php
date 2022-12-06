@@ -10,10 +10,12 @@ class NewsController {
         $news_model = new NewsModel();
         return $news_model->getNewsByid($data);
     }
+    
     public function insertNews($data)
     {
         $news_model = new NewsModel();
-        $news_model = $news_model->insertNews($data);
+        return $news_model->insertNews($data);
+
      
     }
     public function updateNews($data)

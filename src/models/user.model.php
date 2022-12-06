@@ -11,6 +11,9 @@ class UserModel
             $db = $db->connect();
             // query
             $sql = "SELECT * FROM User WHERE TRUE";
+            if(isset($data[''])){
+                
+            }
             // if(isset($data['params']['filters'])){
             //     if($data['params']['filters']['building_id']){
             //         $sql .= " AND building_id LIKE '%".$data['params']['filters']['building_id']."%' ";
@@ -95,7 +98,8 @@ class UserModel
             return [ 'data' => [], 'require' => false];
         }
     }
-    public function insertUser($data)
+    
+    public function updateUserByid($data)
     {
         try {
 
@@ -129,6 +133,25 @@ class UserModel
         }
     }
 
-    
+    public function deleteUserByid($data)
+    {
+        try {
+            $db = new db();
+            $db = $db->connect();
+            $sql = $db->prepare("DELETE FROM user WHERE personalID = :pid; ");
+            $sql->bindParam(':pid', $data['personalID']);
+            $sql->execute();
+            $db = null;
+            if (!$sql) {
+                return [ 'require' => false];
+            } else {
+                return [ 'require' => true];
+            }
+        } catch (PDOException $e) {
+            $db = null;
+            echo $e->getMessage();
+            return ['require' => false];
+        }
+    }
 
 }

@@ -1,31 +1,32 @@
 <?php
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-require './src/controllers/news.controller.php';
-$app->post('/news/getNewsBy', function (Request $request, Response $response) {
+require './src/controllers/prefix.controller.php';
+$app->post('/prefix/getPrefixBy', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->getNewsBy($data));
+    $prefix = new PrefixController();
+    echo json_encode($prefix->getPrefixBy($data));
 });
-$app->post('/news/getNewsByid', function (Request $request, Response $response) {
+$app->post('/prefix/getPrefixByid', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->getNewsByid($data));
+    $prefix = new PrefixController();
+    echo json_encode($prefix->getPrefixByid($data));
 });
-$app->post('/news/insertNews', function (Request $request,Response $response) {
+
+$app->post('/prefix/insertPrefix', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->insertNews($data));
+    $prefix = new PrefixController();
+    echo json_encode($prefix->insertPrefix($data));
 });
-$app->post('/news/updateNews', function (Request $request,Response $response) {
+$app->post('/prefix/updatePrefix', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->updateNews($data));
+    $prefix = new PrefixController();
+    echo json_encode($prefix->updatePrefix($data));
 });
-$app->post('/news/deleteNewsByid', function (Request $request,Response $response) {
+$app->post('/prefix/deletePrefixByid', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->deleteNewsByid($data));
+    $prefix = new PrefixController();
+    echo json_encode($prefix->deletePrefixByid($data));
 });
 
 // $app->post('/user/getUserByID', function (Request $request, Response $response) {

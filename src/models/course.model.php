@@ -1,8 +1,8 @@
 <?php
-class NewsModel
+class CourseModel
 {
     //แสดงผู้ใช้
-    public function getNewsBy()
+    public function getCourseBy()
     {
         try {
             // Get DB Object
@@ -10,7 +10,7 @@ class NewsModel
             // connect to DB
             $db = $db->connect();
             // query
-            $sql = "SELECT * FROM News WHERE TRUE";
+            $sql = "SELECT * FROM course WHERE TRUE";
             $query = $db->query($sql);
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
@@ -24,17 +24,15 @@ class NewsModel
             $db = null;
             return ['data' => [], 'require' => false];
         }
+        
     }
-    public function getNewsByid($data)
+    public function getCourseByid($data)
     {
         try {
-            // Get DB Object
             $db = new db();
-            // connect to DB
             $db = $db->connect();
-            // query
-            $sql = $db -> prepare("SELECT * FROM News WHERE newsID = :newsid");
-            $sql->bindParam(':newsid',$data['newsID']);
+            $sql = $db -> prepare("SELECT * FROM course WHERE courseID = :cid");
+            $sql->bindParam(':cid',$data['courseID']);
             $sql->execute();
             $result = $sql->fetchAll(PDO::FETCH_OBJ);
             
@@ -49,19 +47,16 @@ class NewsModel
             return ['data' => 'catch', 'require' => false];
         }
     }
-
-    public function insertNews($data)
+    
+    public function insertCourse($data)
     {
         try {
 
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("INSERT INTO news (`newsID`,`news_title`,`news_description`,`news_file`,`news_file_date`) VALUES (:newsid,:newstitle,:newsdescription,:newsfile,:newsdate)");
-            $sql->bindParam(':newsid', $data['newsID']);
-            $sql->bindParam(':newstitle', $data['news_title']);
-            $sql->bindParam(':newsdescription', $data['news_description']);
-            $sql->bindParam(':newsfile', $data['news_file']);
-            $sql->bindParam(':newsdate', $data['news_file_date']);
+            $sql = $db->prepare("INSERT INTO course (`courseID`,`course_name`) VALUES (:cid,:cname)");
+            $sql->bindParam(':cid', $data['courseID']);
+            $sql->bindParam(':cname', $data['course_name']);
             $sql->execute();
             
             $db = null;
@@ -78,21 +73,17 @@ class NewsModel
             return ['data' => [], 'require' => false];
         }
     }
-    public function updateNews($data)
+    public function updateCourse($data)
     {
         try {
 
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("UPDATE news 
-                                SET news_title = :newstitle , 
-                                    news_description = :newsdescription ,
-                                    news_file = :newsfile
-                                WHERE newsID = :newsid; ");
-            $sql->bindParam(':newsid', $data['newsID']);
-            $sql->bindParam(':newstitle', $data['news_title']);
-            $sql->bindParam(':newsdescription', $data['news_description']);
-            $sql->bindParam(':newsfile', $data['news_file']);
+            $sql = $db->prepare("UPDATE course 
+                                SET course_name = :cname 
+                                WHERE courseID = :cid ; ");
+            $sql->bindParam(':cid', $data['courseID']);
+            $sql->bindParam(':cname', $data['course_name']);
             $sql->execute();
             $db = null;
             if (!$sql) {
@@ -108,13 +99,13 @@ class NewsModel
             return ['data' => [], 'require' => false];
         }
     }
-    public function deleteNewsByid($data)
+    public function deleteCourseByid($data)
     {
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("DELETE FROM news WHERE newsID = :newsid; ");
-            $sql->bindParam(':newsid', $data['newsID']);
+            $sql = $db->prepare("DELETE FROM course WHERE courseID = :cid; ");
+            $sql->bindParam(':cid', $data['courseID']);
             $sql->execute();
             $db = null;
             if (!$sql) {

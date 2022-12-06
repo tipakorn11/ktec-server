@@ -22,28 +22,19 @@ class UserController {
             return $user;   
         }
     }
-    public function insertUser($data)
-    {
-        $user_model = new UserModel();
-        return $user_model->insertUser($data);
+    // public function insertUser($data)
+    // {
+    //     $user_model = new UserModel();
+    //     return $user_model->insertUser($data);
+    // }
+   
+    public function updateUserByid($data){
+        $user = new UserModel();
+        return $user->updateUserByid($data);
     }
-    // public function getUserByID($data){
-    //     $user = new BuildingModel();
-    //     return $user->getUserByID($data);
-    // }
 
-    // public function insertUser($data){
-    //     $user = new BuildingModel();
-    //     return $user->insertUser($data);
-    // }
-
-    // public function updateUserByID($data){
-    //     $user = new BuildingModel();
-    //     return $user->updateUserByID($data);
-    // }
-
-    // public function deleteUserByID($data){
-    //     $user = new BuildingModel();
-    //     return $user->deleteUserByID($data);
-    // }
+    public function deleteUserByid($data){
+        $user = new UserModel();
+        return $user->deleteUserByid($data);
+    }
 }

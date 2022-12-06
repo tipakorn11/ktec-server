@@ -1,31 +1,32 @@
 <?php
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-require './src/controllers/news.controller.php';
-$app->post('/news/getNewsBy', function (Request $request, Response $response) {
+require './src/controllers/course.controller.php';
+$app->post('/course/getCourseBy', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->getNewsBy($data));
+    $course = new CourseController();
+    echo json_encode($course->getCourseBy($data));
 });
-$app->post('/news/getNewsByid', function (Request $request, Response $response) {
+$app->post('/course/getCourseByid', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->getNewsByid($data));
+    $course = new CourseController();
+    echo json_encode($course->getCourseByid($data));
 });
-$app->post('/news/insertNews', function (Request $request,Response $response) {
+
+$app->post('/course/insertCourse', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->insertNews($data));
+    $course = new CourseController();
+    echo json_encode($course->insertCourse($data));
 });
-$app->post('/news/updateNews', function (Request $request,Response $response) {
+$app->post('/course/updateCourse', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->updateNews($data));
+    $course = new CourseController();
+    echo json_encode($course->updateCourse($data));
 });
-$app->post('/news/deleteNewsByid', function (Request $request,Response $response) {
+$app->post('/course/deleteCourseByid', function (Request $request,Response $response) {
     $data = $request->getParsedBody();
-    $news = new NewsController();
-    echo json_encode($news->deleteNewsByid($data));
+    $course = new CourseController();
+    echo json_encode($course->deleteCourseByid($data));
 });
 
 // $app->post('/user/getUserByID', function (Request $request, Response $response) {
