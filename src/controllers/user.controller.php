@@ -22,11 +22,10 @@ class UserController {
             return $user;   
         }
     }
-    // public function insertUser($data)
-    // {
-    //     $user_model = new UserModel();
-    //     return $user_model->insertUser($data);
-    // }
+    public function getUserByid($data){
+        $user_model = new UserModel();
+        return $user_model->getUserByid($data);
+    }
    
     public function updateUserByid($data){
         $user = new UserModel();

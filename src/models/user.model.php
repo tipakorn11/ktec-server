@@ -56,6 +56,49 @@ class UserModel
         }
     }
 
+    public function getUserByid($data)
+    {
+        try {
+            // Get DB Object
+            $db = new db();
+            // connect to DB
+            $db = $db->connect();
+            // query
+            $sql = $db -> prepare("SELECT *,
+                                    IFNULL((SELECT prefix_name FROM prefix WHERE prefix.prefixID = user.prefixID),user.prefixID) AS prefix_name
+                                    FROM user  WHERE user.personalID = :usid ");
+            
+            $sql->bindParam(':usid',$data['personalID']);
+            $sql->execute();
+            $user = $sql->fetchAll(PDO::FETCH_OBJ);
+
+            $sql = $db -> prepare("SELECT * FROM educational WHERE personalID = :usid ");
+            $sql->bindParam(':usid',$data['personalID']);
+            $sql->execute();
+            $educate = $sql->fetchAll(PDO::FETCH_OBJ);
+
+            // $sql = $db -> prepare("SELECT * FROM trainning_certificate WHERE personalID = :usid ");
+            // $sql->bindParam(':usid',$data['personalID']);
+            // $sql->execute();
+            // $training = $sql->fetchAll(PDO::FETCH_OBJ);
+
+            $sql = $db -> prepare("SELECT * FROM useraddress WHERE personalID = :usid ");
+            $sql->bindParam(':usid',$data['personalID']);
+            $sql->execute();
+            $useraddress = $sql->fetchAll(PDO::FETCH_OBJ);
+            
+            $db = null;
+            if (!$user) {
+                return ['data' => [], 'require' => false];
+            } else {
+                return ['data' => $user, 'require' => true ,'educate'=> $educate,'training'=> $training,'useraddress'=> $useraddress];
+            }
+        } catch (PDOException $e) {
+            $db = null;
+            return ['data' => 'catch', 'require' => false];
+        }
+    }
+
     public function checkLogin($data)
     {
         try {
