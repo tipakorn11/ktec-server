@@ -28,6 +28,8 @@ $app->add(function ($req, $res, $next) {
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization,x-access-token')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
+require 'src/routers/education.route.php';
+require 'src/routers/position.route.php';
 require 'src/routers/prefix.route.php';
 require 'src/routers/course.route.php';
 require 'src/routers/news.route.php';

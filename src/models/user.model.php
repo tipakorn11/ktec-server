@@ -10,7 +10,9 @@ class UserModel
             // connect to DB
             $db = $db->connect();
             // query
-            $sql = "SELECT * FROM User WHERE TRUE";
+            $sql = "SELECT *
+                    FROM user 
+                    WHERE TRUE";
             if(isset($data[''])){
                 
             }
@@ -65,23 +67,31 @@ class UserModel
             $db = $db->connect();
             // query
             $sql = $db -> prepare("SELECT *,
-                                    IFNULL((SELECT prefix_name FROM prefix WHERE prefix.prefixID = user.prefixID),user.prefixID) AS prefix_name
-                                    FROM user  WHERE user.personalID = :usid ");
+                                    IFNULL((SELECT prefix_name FROM prefix WHERE prefix.prefixID = user.prefixID),user.prefixID) AS prefix_name,
+                                    IFNULL((SELECT course_name FROM course WHERE course.courseID = user.courseID),user.courseID) AS course_name
+                                    FROM user  
+                                    WHERE user.personalID = :usid ");
             
             $sql->bindParam(':usid',$data['personalID']);
             $sql->execute();
             $user = $sql->fetchAll(PDO::FETCH_OBJ);
 
-            $sql = $db -> prepare("SELECT * FROM educational WHERE personalID = :usid ");
+            $sql = $db -> prepare("SELECT * FROM education WHERE personalID = :pid ");
+            $sql->bindParam(':pid',$data['personalID']);
+            $sql->execute();
+            $education = $sql->fetchAll(PDO::FETCH_OBJ);
+         
+            $sql = $db -> prepare("SELECT *,DATEDIFF( training_end_date,training_date) AS date_diff FROM training_certificate WHERE personalID = :usid ");
             $sql->bindParam(':usid',$data['personalID']);
             $sql->execute();
+            $training = $sql->fetchAll(PDO::FETCH_OBJ);
+            
+            $sql = $db -> prepare("SELECT *,ifnull((SELECT position.position_name FROM position WHERE user_position.positionID = position.positionID ),positioniD ) as position_name FROM ktec.user_position WHERE personalID = :usid");
+            $sql->bindParam(':usid',$data['personalID']);
+            $sql->execute();
+            $position = $sql->fetchAll(PDO::FETCH_OBJ);
+
             $educate = $sql->fetchAll(PDO::FETCH_OBJ);
-
-            // $sql = $db -> prepare("SELECT * FROM trainning_certificate WHERE personalID = :usid ");
-            // $sql->bindParam(':usid',$data['personalID']);
-            // $sql->execute();
-            // $training = $sql->fetchAll(PDO::FETCH_OBJ);
-
             $sql = $db -> prepare("SELECT * FROM useraddress WHERE personalID = :usid ");
             $sql->bindParam(':usid',$data['personalID']);
             $sql->execute();
@@ -91,7 +101,13 @@ class UserModel
             if (!$user) {
                 return ['data' => [], 'require' => false];
             } else {
-                return ['data' => $user, 'require' => true ,'educate'=> $educate,'training'=> $training,'useraddress'=> $useraddress];
+                return ['data' => $user, 
+                        'useraddress'=> $useraddress, 
+                        'position' => $position,
+                        'education' => $education,
+                        'training' => $training,
+                        'require' => true ,
+                    ];
             }
         } catch (PDOException $e) {
             $db = null;
