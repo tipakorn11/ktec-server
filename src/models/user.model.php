@@ -69,6 +69,9 @@ class UserModel
             $sql = $db -> prepare("SELECT *,
                                     IFNULL((SELECT prefix_name FROM prefix WHERE prefix.prefixID = user.prefixID),user.prefixID) AS prefix_name,
                                     IFNULL((SELECT course_name FROM course WHERE course.courseID = user.courseID),user.courseID) AS course_name
+
+
+
                                     FROM user  
                                     WHERE user.personalID = :usid ");
             
@@ -91,11 +94,65 @@ class UserModel
             $sql->execute();
             $position = $sql->fetchAll(PDO::FETCH_OBJ);
 
-            $educate = $sql->fetchAll(PDO::FETCH_OBJ);
             $sql = $db -> prepare("SELECT * FROM useraddress WHERE personalID = :usid ");
             $sql->bindParam(':usid',$data['personalID']);
             $sql->execute();
             $useraddress = $sql->fetchAll(PDO::FETCH_OBJ);
+            try{
+                $sql = $db -> prepare("SELECT * FROM teacher_license WHERE personalID = :usid ");
+                $sql->bindParam(':usid',$data['personalID']);
+                $sql->execute();
+                $tl = $sql->fetchAll(PDO::FETCH_OBJ);
+
+                $sql = $db -> prepare("SELECT * FROM teacher_permission_license WHERE personalID = :usid ");
+                $sql->bindParam(':usid',$data['personalID']);
+                $sql->execute();
+                $tpl = $sql->fetchAll(PDO::FETCH_OBJ);
+
+                $sql = $db -> prepare("SELECT * FROM ht_license WHERE personalID = :usid ");
+                $sql->bindParam(':usid',$data['personalID']);
+                $sql->execute();
+                $ht_license = $sql->fetchAll(PDO::FETCH_OBJ);
+            
+            
+
+            }
+            catch(throwable $e){}
+
+            try { 
+                $sql = $db -> prepare("SELECT * FROM appointment WHERE personalID = :usid ");
+                $sql->bindParam(':usid',$data['personalID']);
+                $sql->execute();
+                $appointment = $sql->fetchAll(PDO::FETCH_OBJ);
+                
+          
+            } catch (throwable $e) {}
+
+            try {
+                $sql = $db -> prepare("SELECT * FROM portfolio WHERE personalID = :usid ");
+                $sql->bindParam(':usid',$data['personalID']);
+                $sql->execute();
+                $portfolio = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+              
+            
+            } catch (Throwable $e) {}
+            
+            try {
+                $sql = $db -> prepare("SELECT * FROM insignia WHERE personalID = :usid ");
+                $sql->bindParam(':usid',$data['personalID']);
+                $sql->execute();
+                $insignia = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+            } catch (Throwable $e) {}
+           
+            try {
+                $sql = $db -> prepare("SELECT * FROM punishment WHERE personalID = :usid ");
+                $sql->bindParam(':usid',$data['personalID']);
+                $sql->execute();
+                $punishment = $sql->fetchAll(PDO::FETCH_OBJ);
+                   
+            } catch (Throwable $e) {}
             
             $db = null;
             if (!$user) {
@@ -106,6 +163,13 @@ class UserModel
                         'position' => $position,
                         'education' => $education,
                         'training' => $training,
+                        'tl' => $tl,
+                        'tpl' => $tpl,
+                        'ht_license' => $ht_license,
+                        'appointment' => $appointment,
+                        'portfolio' => $portfolio,
+                        'insignia' => $insignia,
+                        'punishment' => $punishment,
                         'require' => true ,
                     ];
             }
