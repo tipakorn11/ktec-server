@@ -29,6 +29,7 @@ $app->add(function ($req, $res, $next) {
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 require 'src/routers/education.route.php';
+require 'src/routers/permission.route.php';
 require 'src/routers/position.route.php';
 require 'src/routers/prefix.route.php';
 require 'src/routers/course.route.php';
@@ -36,17 +37,5 @@ require 'src/routers/news.route.php';
 require 'src/routers/user.route.php';
 require 'src/JwtHandler.php';
 
-//echo json_encode($token);
-// # create your First Route
 
-// function moveUploadedFile($directory, UploadedFile $uploadedFile)
-// {
-//     $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-//     $basename = bin2hex(random_bytes(8)); // see http://php.net/manual/en/function.random-bytes.php
-//     $filename = sprintf('%s.%0.8s', $basename, $extension);
-
-//     $uploadedFile->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
-
-//     return $filename;
-// }
 $app->run();

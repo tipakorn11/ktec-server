@@ -153,7 +153,7 @@ class UserModel
                 $punishment = $sql->fetchAll(PDO::FETCH_OBJ);
                    
             } catch (Throwable $e) {}
-            
+           
             $db = null;
             if (!$user) {
                 return ['data' => [], 'require' => false];
@@ -209,14 +209,21 @@ class UserModel
                 $sql->bindParam(':username',$user[0]->username);
                 $sql->execute();
                 $position = $sql->fetchAll(PDO::FETCH_OBJ);
-                
-
-
+                $tmp = [];
+                foreach($position as $pos){
+                    $sql = $db->prepare("SELECT *,
+                                        ifnull((SELECT menu_name FROM menu WHERE menu.menuID = permission.menuID),permission.menuID)as menu_name,
+                                        ifnull((SELECT menu_group FROM menu WHERE menu.menuID = permission.menuID),permission.menuID)as menu_group 
+                                        FROM permission 
+                                        WHERE positionID = :position_id;");
+                    $sql->bindParam(':position_id',$pos->positionID);
+                    $sql->execute();
+                    $permission = $sql->fetchAll(PDO::FETCH_OBJ);
+                    array_push($tmp,['position_id'=>$pos->positionID,'position_name'=>$pos->position_name,'permission'=>$permission]);
+                }
             }
-            
-               return ['data' =>$user,'require' => true , 'token' => $token ];
+               return ['data' =>$user,'require' => true , 'token' => $token,'permission'=> $tmp ];
         } catch (PDOException $e) {
-            // show error message as Json format
             $db = null;
             return [ 'data' => [], 'require' => false];
         }
