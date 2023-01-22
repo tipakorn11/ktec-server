@@ -19,7 +19,7 @@ class PermissionModel
                 IFNULL(permission_delete, FALSE) AS permission_delete
                 FROM permission as tb
                 LEFT JOIN menu ON menu.menuID = tb.menuID 
-                ORDER BY menu_group, tb.menuID;");
+                GROUP BY menu_group, tb.menuID;");
                                     
                 $sql->execute();
                 $permission = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -35,7 +35,7 @@ class PermissionModel
             $db = new db();
             $db = $db->connect();
            
-                $sql = $db->prepare("SELECT   
+                $sql = $db->prepare("SELECT   tb.menuID,
                                     menu_group,
                                     menu_name,
                                     menu_name_en,
@@ -46,7 +46,8 @@ class PermissionModel
                                     IFNULL(permission_cancel, FALSE) AS permission_cancel,
                                     IFNULL(permission_delete, FALSE) AS permission_delete
                                     FROM permission as tb
-                                    LEFT JOIN menu ON menu.menuID = tb.menuID AND positionID = :position_id || ''");
+                                    LEFT JOIN menu ON menu.menuID = tb.menuID 
+                                    WHERE positionID = :position_id ");
                 $sql->bindParam(':position_id',$data['positionID']);
                 $sql->execute();
                 $permission = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -92,30 +93,29 @@ class PermissionModel
     }
     public function updatePermission($data){
         try {
-            // Get DB Object
             $db = new db();
-            // connect to DB
             $db = $db->connect();
-            // query
+            foreach($data['permissions'] as $permission){
             $sql = $db->prepare("UPDATE permission 
             SET permission_add = :permission_add,
             permission_edit =:permission_edit,
             permission_delete =:permission_delete,
-            permission_view =:permission_view
+            permission_view =:permission_view,
             permission_approve =:permission_approve,
             permission_cancel =:permission_cancel
-            WHERE position_id = :position_id AND menu_code =:menu_code;
+            WHERE positionID = :position_id AND menuID =:menu_code;
             ");
-            $sql->bindParam(':position_id',$data['position_id']);
-            $sql->bindParam(':menu_code',$data['menu_code']);
-            $sql->bindParam(':permission_add',$data['permission_add']);
-            $sql->bindParam(':permission_edit',$data['permission_edit']);
-            $sql->bindParam(':permission_delete',$data['permission_delete']);
-            $sql->bindParam(':permission_view',$data['permission_view']);
-            $sql->bindParam(':permission_approve',$data['permission_approve']);
-            $sql->bindParam(':permission_cancel',$data['permission_cancel']);
+            $sql->bindParam(':position_id',$permission['positionID']);
+            $sql->bindParam(':menu_code',$permission['menuID']);
+            $sql->bindParam(':permission_add',$permission['permission_add']);
+            $sql->bindParam(':permission_edit',$permission['permission_edit']);
+            $sql->bindParam(':permission_delete',$permission['permission_delete']);
+            $sql->bindParam(':permission_view',$permission['permission_view']);
+            $sql->bindParam(':permission_approve',$permission['permission_approve']);
+            $sql->bindParam(':permission_cancel',$permission['permission_cancel']);
 
             $sql->execute();
+            }
             $db = null;
             if (!$sql) {
                 return ['data'=>[],'require'=>false];

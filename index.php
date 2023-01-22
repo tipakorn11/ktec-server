@@ -8,16 +8,8 @@ date_default_timezone_set("UTC");
 require 'vendor/autoload.php';
 require 'src/config/db.php';
 use Mpdf\Mpdf;
-// # include DB connection file
 $app = new \Slim\App;
-// # create new Slim instance
-// $corsOptions = array(
-//     "origin" => "*",
-//     "exposeHeader" => array("Content-Type", "X-Requested-With", "Xauthentication", "X-client","Authorization"),
-//     "allowMethod" => array('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS')
-// );
-// $cors = new \CorsSlim\CorsSlim($corsOptions);
-// $app->add($cors);
+
 setlocale(LC_ALL, "th_TH.UTF-8");
 $container = $app->getContainer();
 $container['upload_directory'] = __DIR__ . '/src/uploads/';
@@ -28,6 +20,7 @@ $app->add(function ($req, $res, $next) {
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization,x-access-token')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
+
 require 'src/routers/education.route.php';
 require 'src/routers/permission.route.php';
 require 'src/routers/position.route.php';

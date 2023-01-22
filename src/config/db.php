@@ -7,6 +7,12 @@ class db
   private $dbuser = 'root';
   private $dbpass = 'root123456';
   private $dbname = 'ktec';
+  
+  // private $dbhost = 'localhost';
+  // private $dbuser = 'id20167855_ktecdatabase';
+  // private $dbpass = '[E<^N{GByawR<1ID';
+  // private $dbname = 'id20167855_ktec';
+
   // private $dbhost = 'dev.cpe.rmuti.ac.th';
   // private $dbuser = 'ktec';
   // private $dbpass = 'Ktec@CPE';

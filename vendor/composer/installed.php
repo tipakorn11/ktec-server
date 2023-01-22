@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'c00b8e12987f55549c7f5357815416e5ddae312c',
+        'reference' => '87541ec5a5bc6a1eae25b2b13bf0a71364197101',
         'name' => 'slim/slim-skeleton',
         'dev' => true,
     ),
@@ -343,7 +343,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'c00b8e12987f55549c7f5357815416e5ddae312c',
+            'reference' => '87541ec5a5bc6a1eae25b2b13bf0a71364197101',
             'dev_requirement' => false,
         ),
         'symfony/polyfill-ctype' => array(

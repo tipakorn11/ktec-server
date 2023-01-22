@@ -5,34 +5,19 @@ class UserModel
     public function getUserBy($data)
     {
         try {
-            // Get DB Object
             $db = new db();
-            // connect to DB
             $db = $db->connect();
             // query
             $sql = "SELECT *
                     FROM user 
                     WHERE TRUE";
-            if(isset($data[''])){
-                
-            }
-            // if(isset($data['params']['filters'])){
-            //     if($data['params']['filters']['building_id']){
-            //         $sql .= " AND building_id LIKE '%".$data['params']['filters']['building_id']."%' ";
-            //     }
-            //     if($data['params']['filters']['faculty_name']){
-            //         $sql .= " AND building_name LIKE '%".$data['params']['filters']['building_name']."%' ";
-            //     }
-            // }
+           
+            
             $query = $db->query($sql);
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
             echo $data;
-            // if(isset($data['params']['pagination'])){
-            //     $sql .= " LIMIT ".($data['params']['pagination']['current']* $data['params']['pagination']['pageSize'] - $data['params']['pagination']['pageSize']).",".($data['params']['pagination']['pageSize'])."";
-            // }
-            // $query = $db->query($sql);
-            // $result = $query->fetchAll(PDO::FETCH_OBJ);
+           
             $db = null;
             if (!$result) {
                 return ['data' => [], 'require' => false];
