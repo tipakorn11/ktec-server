@@ -9,7 +9,7 @@ class UserModel
             $db = $db->connect();
             // query
             $sql = "SELECT *
-                    FROM user 
+                    FROM tb_user 
                     WHERE TRUE";
            
             
@@ -52,17 +52,17 @@ class UserModel
             $db = $db->connect();
             // query
             $sql = $db -> prepare("SELECT *,
-                                    IFNULL((SELECT prefix_name FROM prefix WHERE prefix.prefixID = user.prefixID),user.prefixID) AS prefix_name,
-                                    IFNULL((SELECT course_name FROM course WHERE course.courseID = user.courseID),user.courseID) AS course_name
+                                    IFNULL((SELECT prefix_name FROM prefix WHERE prefix.prefixID = tb_user.prefixID),tb_user.prefixID) AS prefix_name,
+                                    IFNULL((SELECT course_name FROM course WHERE course.courseID = tb_user.courseID),tb_user.courseID) AS course_name
 
 
 
-                                    FROM user  
-                                    WHERE user.personalID = :usid ");
+                                    FROM tb_user  
+                                    WHERE tb_user.personalID = :usid ");
             
             $sql->bindParam(':usid',$data['personalID']);
             $sql->execute();
-            $user = $sql->fetchAll(PDO::FETCH_OBJ);
+            $tb_user = $sql->fetchAll(PDO::FETCH_OBJ);
 
             $sql = $db -> prepare("SELECT * FROM education WHERE personalID = :pid ");
             $sql->bindParam(':pid',$data['personalID']);
@@ -140,10 +140,10 @@ class UserModel
             } catch (Throwable $e) {}
            
             $db = null;
-            if (!$user) {
+            if (!$tb_user) {
                 return ['data' => [], 'require' => false];
             } else {
-                return ['data' => $user, 
+                return ['data' => $tb_user, 
                         'useraddress'=> $useraddress, 
                         'position' => $position,
                         'education' => $education,
@@ -174,24 +174,24 @@ class UserModel
            
             // query
             $password = md5($data['password']);
-            $sql = $db->prepare("SELECT * FROM user WHERE username = :username AND password = :pass");
+            $sql = $db->prepare("SELECT * FROM tb_user WHERE username = :username AND password = :pass");
             $sql->bindParam(':username',$data['username']);
             $sql->bindParam(':pass',$password);
             $sql->execute();
-            $user = $sql->fetchAll(PDO::FETCH_OBJ);
-            if (!$user) {
+            $tb_user = $sql->fetchAll(PDO::FETCH_OBJ);
+            if (!$tb_user) {
                 $db = null;
                 return ['data' => [], 'require' => false];
             }else{
                 $jwt = new JwtHandler();
-                $token = $jwt->_jwt_encode_data("http://localhost/ktec-Server/public/", array("id" => $user[0]->username));
+                $token = $jwt->_jwt_encode_data("http://localhost/ktec-Server/public/", array("id" => $tb_user[0]->username));
                 $sql = $db->prepare("SELECT *,
                 IFNULL((SELECT position_name FROM position WHERE position.positionID = user_position.positionID),user_position.positionID)AS position_name
                             FROM ktec.user_position 
                             WHERE personalID =(
-                            select personalID FROM user where username = :username
+                            select personalID FROM tb_user where username = :username
                             ) ");
-                $sql->bindParam(':username',$user[0]->username);
+                $sql->bindParam(':username',$tb_user[0]->username);
                 $sql->execute();
                 $position = $sql->fetchAll(PDO::FETCH_OBJ);
                 $tmp = [];
@@ -207,7 +207,7 @@ class UserModel
                     array_push($tmp,['position_id'=>$pos->positionID,'position_name'=>$pos->position_name,'permission'=>$permission]);
                 }
             }
-               return ['data' =>$user,'require' => true , 'token' => $token,'permission'=> $tmp ];
+               return ['data' =>$tb_user,'require' => true , 'token' => $token,'permission'=> $tmp ];
         } catch (PDOException $e) {
             $db = null;
             return [ 'data' => [], 'require' => false];
@@ -225,7 +225,7 @@ class UserModel
             // query
             $password = md5($data['password']);
             //echo $password;
-            $sql = $db->prepare("INSERT INTO user (`personalID`,`username`,`password`) VALUES (:personalID,:username,:pass)");
+            $sql = $db->prepare("INSERT INTO tb_user (`personalID`,`username`,`password`) VALUES (:personalID,:username,:pass)");
             $sql->bindParam(':personalID', $data['personalID']);
             $sql->bindParam(':username', $data['username']);
             $sql->bindParam(':pass', $password);
@@ -253,7 +253,7 @@ class UserModel
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("DELETE FROM user WHERE personalID = :pid; ");
+            $sql = $db->prepare("DELETE FROM tb_user WHERE personalID = :pid; ");
             $sql->bindParam(':pid', $data['personalID']);
             $sql->execute();
             $db = null;
