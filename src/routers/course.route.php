@@ -52,3 +52,4 @@ $app->post('/course/deleteCourseByid', function (Request $request,Response $resp
 //     $building = new BuildingController();
 //     echo json_encode($building->insertBuilding($data));
 // });
+?>

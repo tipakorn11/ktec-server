@@ -1,8 +1,8 @@
 <?php
-class FileModel
+class FilesModel
 {
     //แสดงผู้ใช้
-    public function getFileBy()
+    public function getFilesBy()
     {
         try {
             // Get DB Object
@@ -10,7 +10,7 @@ class FileModel
             // connect to DB
             $db = $db->connect();
             // query
-            $sql = "SELECT * FROM File WHERE TRUE";
+            $sql = "SELECT * FROM tb_file WHERE true";
             $query = $db->query($sql);
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
@@ -25,7 +25,7 @@ class FileModel
             return ['data' => [], 'require' => false];
         }
     }
-    public function getFileByid($data)
+    public function getFilesByPersonalid($data)
     {
         try {
             // Get DB Object
@@ -33,8 +33,8 @@ class FileModel
             // connect to DB
             $db = $db->connect();
             // query
-            $sql = $db -> prepare("SELECT * FROM File WHERE fileID = :fileid");
-            $sql->bindParam(':fileid',$data['fileID']);
+            $sql = $db -> prepare("SELECT * FROM tb_file WHERE personalID = :pid");
+            $sql->bindParam(':pid',$data['personalID']);
             $sql->execute();
             $result = $sql->fetchAll(PDO::FETCH_OBJ);
             
@@ -50,18 +50,18 @@ class FileModel
         }
     }
 
-    public function insertFile($data)
+    public function insertFiles($data)
     {
         try {
 
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("INSERT INTO file (`fileID`,`file_title`,`file_description`,`file_file`,`file_file_date`) VALUES (:fileid,:filetitle,:filedescription,:filefile,:filedate)");
+            $sql = $db->prepare("INSERT INTO file (`fileID`,`personalID`,`file_name`,`file_status`,`file_date`) VALUES (:fileid,:filetitle,:filesname,:filestatus,:filedate)");
             $sql->bindParam(':fileid', $data['fileID']);
-            $sql->bindParam(':filetitle', $data['file_title']);
-            $sql->bindParam(':filedescription', $data['file_description']);
-            $sql->bindParam(':filefile', $data['file_file']);
-            $sql->bindParam(':filedate', $data['file_file_date']);
+            $sql->bindParam(':pid', $data['personalID']);
+            $sql->bindParam(':filesname', $data['file_name']);
+            $sql->bindParam(':filestatus', $data['file_status']);
+            $sql->bindParam(':filedate', $data['file_date']);
             $sql->execute();
             
             $db = null;
@@ -78,21 +78,19 @@ class FileModel
             return ['data' => [], 'require' => false];
         }
     }
-    public function updateFile($data)
+    public function updateFiles($data)
     {
         try {
 
             $db = new db();
             $db = $db->connect();
             $sql = $db->prepare("UPDATE file 
-                                SET file_title = :filetitle , 
-                                    file_description = :filedescription ,
-                                    file_file = :filefile
+                                SET file_name = :filesname , 
+                                    file_date = :filedate ,
                                 WHERE fileID = :fileid; ");
             $sql->bindParam(':fileid', $data['fileID']);
-            $sql->bindParam(':filetitle', $data['file_title']);
-            $sql->bindParam(':filedescription', $data['file_description']);
-            $sql->bindParam(':filefile', $data['file_file']);
+            $sql->bindParam(':filesname', $data['file_name']);
+            $sql->bindParam(':filedate', $data['file_date']);
             $sql->execute();
             $db = null;
             if (!$sql) {
@@ -108,12 +106,40 @@ class FileModel
             return ['data' => [], 'require' => false];
         }
     }
-    public function deleteFileByid($data)
+    public function updateStatusFiles($data)
+    {
+        try {
+
+            $db = new db();
+            $db = $db->connect();
+            $sql = $db->prepare("UPDATE file 
+                                SET file_status = :filestatus , 
+                                    file_date = :filedate ,
+                                WHERE fileID = :fileid; ");
+            $sql->bindParam(':fileid', $data['fileID']);
+            $sql->bindParam(':filesname', $data['file_name']);
+            $sql->bindParam(':filedate', $data['file_date']);
+            $sql->execute();
+            $db = null;
+            if (!$sql) {
+
+                return ['data' => [], 'require' => false];
+            } else {
+
+                return ['data' => [], 'require' => true];
+            }
+        } catch (PDOException $e) {
+            $db = null;
+            echo $e->getMessage();
+            return ['data' => [], 'require' => false];
+        }
+    }
+    public function deleteFilesByid($data)
     {
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("DELETE FROM file WHERE fileID = :fileid; ");
+            $sql = $db->prepare("DELETE FROM tb_file WHERE fileID = :fileid; ");
             $sql->bindParam(':fileid', $data['fileID']);
             $sql->execute();
             $db = null;
@@ -129,3 +155,4 @@ class FileModel
         }
     }
 }
+?>
