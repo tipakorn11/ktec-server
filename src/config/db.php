@@ -31,3 +31,4 @@ class db
     return $dbConn;
   }
 }
+?>

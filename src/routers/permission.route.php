@@ -23,4 +23,3 @@ $app->post('/permission/updatePermission', function (Request $request,Response $
     $permission = new PermissionController();
     echo json_encode($permission->updatePermission($data));
 });
-?>

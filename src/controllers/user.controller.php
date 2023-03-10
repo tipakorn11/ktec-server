@@ -37,4 +37,3 @@ class UserController {
         return $user->deleteUserByid($data);
     }
 }
-?>

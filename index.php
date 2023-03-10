@@ -26,7 +26,7 @@ require 'src/routers/permission.route.php';
 require 'src/routers/position.route.php';
 require 'src/routers/prefix.route.php';
 require 'src/routers/course.route.php';
-require 'src/routers/file.route.php';
+require 'src/routers/files.route.php';
 require 'src/routers/news.route.php';
 require 'src/routers/user.route.php';
 require 'src/JwtHandler.php';

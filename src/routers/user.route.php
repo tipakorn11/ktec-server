@@ -39,4 +39,3 @@ $app->post('/building/deleteuserByID',function(Request $request,Response $respon
     $user = new UserController();
     echo json_encode($user->deleteuserByID($data));
 });
-?>

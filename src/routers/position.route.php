@@ -28,4 +28,3 @@ $app->post('/position/deletePositionByid', function (Request $request,Response $
     $position = new PositionController();
     echo json_encode($position->deletePositionByid($data));
 });
-?>

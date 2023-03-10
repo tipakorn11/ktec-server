@@ -28,4 +28,3 @@ $app->post('/prefix/deletePrefixByid', function (Request $request,Response $resp
     $prefix = new PrefixController();
     echo json_encode($prefix->deletePrefixByid($data));
 });
-?>

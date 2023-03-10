@@ -27,4 +27,3 @@ $app->post('/news/deleteNewsByid', function (Request $request,Response $response
     $news = new NewsController();
     echo json_encode($news->deleteNewsByid($data));
 });
-?>

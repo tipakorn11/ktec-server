@@ -32,5 +32,3 @@ $app->post('/files/deleteFilesByid', function (Request $request,Response $respon
     $files = new FilesController();
     echo json_encode($files->deleteFilesByid($data));
 });
-
-?>

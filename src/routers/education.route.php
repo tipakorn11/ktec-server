@@ -28,4 +28,3 @@ $app->post('/education/deleteEducationByid', function (Request $request,Response
     $education = new EducationController();
     echo json_encode($education->deleteEducationByid($data));
 });
-?>
