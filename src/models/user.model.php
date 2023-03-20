@@ -74,7 +74,7 @@ class UserModel
             $sql->execute();
             $training = $sql->fetchAll(PDO::FETCH_OBJ);
             
-            $sql = $db -> prepare("SELECT *,ifnull((SELECT position.position_name FROM position WHERE user_position.positionID = position.positionID ),positioniD ) as position_name FROM ktec.user_position WHERE personalID = :usid");
+            $sql = $db -> prepare("SELECT *,ifnull((SELECT position.position_name FROM position WHERE user_position.positionID = position.positionID ),positioniD ) as position_name FROM user_position WHERE personalID = :usid");
             $sql->bindParam(':usid',$data['personalID']);
             $sql->execute();
             $position = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -187,7 +187,7 @@ class UserModel
                 $token = $jwt->_jwt_encode_data("http://localhost/ktec-Server/public/", array("id" => $tb_user[0]->username));
                 $sql = $db->prepare("SELECT *,
                 IFNULL((SELECT position_name FROM position WHERE position.positionID = user_position.positionID),user_position.positionID)AS position_name
-                            FROM ktec.user_position 
+                            FROM user_position 
                             WHERE personalID =(
                             select personalID FROM tb_user where username = :username
                             ) ");

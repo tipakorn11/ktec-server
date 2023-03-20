@@ -68,7 +68,7 @@ class JwtHandler
             $db = new db();
             $db = $db->connect();
 
-            $sql = $db->prepare("SELECT * FROM user WHERE username = :username");
+            $sql = $db->prepare("SELECT * FROM tb_user WHERE username = :username");
             $sql->bindParam(':username', $username);
             $sql->execute();
             $user = $sql->fetchAll(PDO::FETCH_OBJ);

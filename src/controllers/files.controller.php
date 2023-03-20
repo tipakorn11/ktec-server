@@ -8,7 +8,7 @@ class FilesController {
     }
     public function getFilesByid($data){
         $files_model = new FilesModel();
-        return $files_model->getFilesByPersonalid($data);
+        return $files_model->getFilesByid($data);
     }
     
     public function insertFiles($data)

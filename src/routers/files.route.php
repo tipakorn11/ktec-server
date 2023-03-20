@@ -7,7 +7,7 @@ $app->post('/files/getFilesBy', function (Request $request, Response $response) 
     $files = new FilesController();
     echo json_encode($files->getFilesBy($data));
 });
-$app->post('/files/getFilesPersonalByid', function (Request $request, Response $response) {
+$app->post('/files/getFilesByid', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
     $files = new FilesController();
     echo json_encode($files->getFilesByid($data));

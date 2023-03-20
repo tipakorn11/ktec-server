@@ -2,7 +2,7 @@
 class FilesModel
 {
     //แสดงผู้ใช้
-    public function getFilesBy()
+    public function getFilesBy($data)
     {
         try {
             // Get DB Object
@@ -10,7 +10,11 @@ class FilesModel
             // connect to DB
             $db = $db->connect();
             // query
-            $sql = "SELECT * FROM tb_file WHERE true";
+            $condition = "";
+            if(isset($data['file_status']) ) $condition .= "AND file_status = "."'".$data['file_status']."'"."";
+            if(isset($data['personalID']) ) $condition .= "AND personalID = "."'".$data['personalID']."'"."";
+
+            $sql = "SELECT * FROM tb_file WHERE true ".$condition;
             $query = $db->query($sql);
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
@@ -25,7 +29,7 @@ class FilesModel
             return ['data' => [], 'require' => false];
         }
     }
-    public function getFilesByPersonalid($data)
+    public function getFilesByid($data)
     {
         try {
             // Get DB Object
@@ -33,8 +37,12 @@ class FilesModel
             // connect to DB
             $db = $db->connect();
             // query
-            $sql = $db -> prepare("SELECT * FROM tb_file WHERE personalID = :pid");
-            $sql->bindParam(':pid',$data['personalID']);
+            $sql = $db -> prepare("SELECT *,
+                            IFNULL((SELECT CONCAT(thai_fname, ' ', thai_lname) 
+                            FROM tb_user 
+                            WHERE tb_user.personalID = tb_file.personalID), NULL) AS fullname
+                            FROM tb_file WHERE fileID = :fid");
+            $sql->bindParam(':fid',$data['fileID']);
             $sql->execute();
             $result = $sql->fetchAll(PDO::FETCH_OBJ);
             
@@ -109,7 +117,7 @@ class FilesModel
     public function updateStatusFiles($data)
     {
         try {
-
+            
             $db = new db();
             $db = $db->connect();
             $sql = $db->prepare("UPDATE file 
