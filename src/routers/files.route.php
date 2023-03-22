@@ -2,6 +2,11 @@
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 require './src/controllers/files.controller.php';
+$app->post('/files/generateFileLastCode', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $files = new FilesController();
+    echo json_encode($files->generateFileLastCode($data));
+});
 $app->post('/files/getFilesBy', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
     $files = new FilesController();

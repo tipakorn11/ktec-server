@@ -2,6 +2,31 @@
 class FilesModel
 {
     //แสดงผู้ใช้
+    public function generateFileLastCode($data)
+    {
+        try {
+            //print_r($data);
+            // Get DB Object
+            $db = new db();
+            // connect to DB
+            $db = $db->connect();
+            // query
+            $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(fileID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM tb_file WHERE fileID LIKE '".$data['code']."%'";
+            $query = $db->query($sql);
+            $result = $query->fetchObject();
+            $db = null;
+            
+            if (!$result) {
+                return ['data'=>[],'require'=>false];
+            } else {
+                return ['data' => $result,'require'=>true];
+            }
+        } catch (PDOException $e) {
+            // show error message as Json format
+            return ['data'=>[],'require'=>false];
+            $db = null;
+        }
+    }
     public function getFilesBy($data)
     {
         try {
@@ -64,12 +89,15 @@ class FilesModel
 
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("INSERT INTO file (`fileID`,`personalID`,`file_name`,`file_status`,`file_date`) VALUES (:fileid,:filetitle,:filesname,:filestatus,:filedate)");
+            $sql = $db->prepare("INSERT INTO tb_file (`fileID`,`personalID`,`file_name`,`file_status`,`file_date`,`file_pdf`) 
+                                    VALUES (:fileid,:pid,:filesname,:filestatus,:filedate,:filepdf)");
             $sql->bindParam(':fileid', $data['fileID']);
             $sql->bindParam(':pid', $data['personalID']);
             $sql->bindParam(':filesname', $data['file_name']);
             $sql->bindParam(':filestatus', $data['file_status']);
             $sql->bindParam(':filedate', $data['file_date']);
+            $sql->bindParam(':filepdf', $data['file_pdf']);
+
             $sql->execute();
             
             $db = null;
@@ -92,9 +120,9 @@ class FilesModel
 
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("UPDATE file 
+            $sql = $db->prepare("UPDATE tb_file 
                                 SET file_name = :filesname , 
-                                    file_date = :filedate ,
+                                    file_date = :filedate 
                                 WHERE fileID = :fileid; ");
             $sql->bindParam(':fileid', $data['fileID']);
             $sql->bindParam(':filesname', $data['file_name']);
@@ -120,13 +148,15 @@ class FilesModel
             
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("UPDATE file 
+            $sql = $db->prepare("UPDATE tb_file 
                                 SET file_status = :filestatus , 
-                                    file_date = :filedate ,
-                                WHERE fileID = :fileid; ");
+                                    file_note = :filesnote ,
+                                    file_date = NOW() 
+                                WHERE fileID = :fileid ");
             $sql->bindParam(':fileid', $data['fileID']);
-            $sql->bindParam(':filesname', $data['file_name']);
-            $sql->bindParam(':filedate', $data['file_date']);
+            $sql->bindParam(':filestatus', $data['file_status']);
+            $sql->bindParam(':filesnote', $data['file_note']);
+
             $sql->execute();
             $db = null;
             if (!$sql) {
