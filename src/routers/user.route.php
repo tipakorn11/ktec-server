@@ -28,13 +28,13 @@ $app->post('/user/checkLogin', function (Request $request, Slim\Http\Response $r
 });
 
 
-$app->post('/building/updateuserByid', function(Request $request, Response $response){
+$app->post('/user/updateUserByid', function(Request $request, Response $response){
     $data = $request->getParsedBody();
     $user = new UserController();
-    echo json_encode($user->updateuserByid($data));
+    echo json_encode($user->updateUserByid($data));
 });
 
-$app->post('/building/deleteuserByID',function(Request $request,Response $response){
+$app->post('/user/deleteuserByID',function(Request $request,Response $response){
     $data = $request->getParsedBody();
     $user = new UserController();
     echo json_encode($user->deleteuserByID($data));

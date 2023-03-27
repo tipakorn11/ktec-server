@@ -90,12 +90,11 @@ class FilesModel
             $db = new db();
             $db = $db->connect();
             $sql = $db->prepare("INSERT INTO tb_file (`fileID`,`personalID`,`file_name`,`file_status`,`file_date`,`file_pdf`) 
-                                    VALUES (:fileid,:pid,:filesname,:filestatus,:filedate,:filepdf)");
+                                    VALUES (:fileid,:pid,:filesname,:filestatus,NOW(),:filepdf)");
             $sql->bindParam(':fileid', $data['fileID']);
             $sql->bindParam(':pid', $data['personalID']);
             $sql->bindParam(':filesname', $data['file_name']);
             $sql->bindParam(':filestatus', $data['file_status']);
-            $sql->bindParam(':filedate', $data['file_date']);
             $sql->bindParam(':filepdf', $data['file_pdf']);
 
             $sql->execute();
@@ -122,11 +121,14 @@ class FilesModel
             $db = $db->connect();
             $sql = $db->prepare("UPDATE tb_file 
                                 SET file_name = :filesname , 
-                                    file_date = :filedate 
+                                    file_date =  NOW() ,
+                                    file_pdf = :filepdf,
+                                    file_status = :filestatus
                                 WHERE fileID = :fileid; ");
             $sql->bindParam(':fileid', $data['fileID']);
             $sql->bindParam(':filesname', $data['file_name']);
-            $sql->bindParam(':filedate', $data['file_date']);
+            $sql->bindParam(':filepdf', $data['file_pdf']);
+            $sql->bindParam(':filestatus', $data['file_status']);
             $sql->execute();
             $db = null;
             if (!$sql) {
