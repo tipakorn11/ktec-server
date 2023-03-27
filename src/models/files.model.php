@@ -37,9 +37,13 @@ class FilesModel
             // query
             $condition = "";
             if(isset($data['file_status']) ) $condition .= "AND file_status = "."'".$data['file_status']."'"."";
-            if(isset($data['personalID']) ) $condition .= "AND personalID = "."'".$data['personalID']."'"."";
+            if(isset($data['personalID']) ) $condition .= "AND tb_file.personalID = "."'".$data['personalID']."'"."";
 
-            $sql = "SELECT * FROM tb_file WHERE true ".$condition;
+            $sql = "SELECT *,
+                    IFNULL((SELECT CONCAT(thai_fname,' ',thai_lname) FROM tb_user WHERE tb_user.personalID = tb_file.personalID), '') as fullname 
+                    FROM tb_file 
+                    WHERE true ".$condition."
+                    ORDER BY tb_file.file_date_upload ASC";
             $query = $db->query($sql);
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
@@ -89,7 +93,7 @@ class FilesModel
 
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("INSERT INTO tb_file (`fileID`,`personalID`,`file_name`,`file_status`,`file_date`,`file_pdf`) 
+            $sql = $db->prepare("INSERT INTO tb_file (`fileID`,`personalID`,`file_name`,`file_status`,`file_date_upload`,`file_pdf`) 
                                     VALUES (:fileid,:pid,:filesname,:filestatus,NOW(),:filepdf)");
             $sql->bindParam(':fileid', $data['fileID']);
             $sql->bindParam(':pid', $data['personalID']);
