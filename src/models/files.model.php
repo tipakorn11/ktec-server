@@ -42,11 +42,11 @@ class FilesModel
             $sql = "SELECT *,
                     IFNULL((SELECT CONCAT(thai_fname,' ',thai_lname) FROM tb_user WHERE tb_user.personalID = tb_file.personalID), '') as fullname ,
                     IFNULL((SELECT position_name FROM position WHERE positionID = (
-                                                                                            SELECT positionID 
-                                                                                            FROM user_position 
-                                                                                            WHERE user_position.personalID = tb_file.personalID
-                                                                                            LIMIT 1
-                                                                                            )),'') as position_name
+                                                                                    SELECT positionID 
+                                                                                    FROM user_position 
+                                                                                    WHERE user_position.personalID = tb_file.personalID
+                                                                                    LIMIT 1
+                                                                                    )),'') as position_name
                     FROM tb_file 
                     WHERE true ".$condition."
                     ORDER BY tb_file.file_date_upload ASC";
