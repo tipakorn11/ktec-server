@@ -2,16 +2,22 @@
 class NewsModel
 {
     //แสดงผู้ใช้
-    public function getNewsBy()
+    public function getNewsBy($data)
     {
         try {
             // Get DB Object
             $db = new db();
             // connect to DB
             $db = $db->connect();
-            // query
-            $sql = "SELECT * FROM News WHERE TRUE";
-            $query = $db->query($sql);
+            // query 
+            $condition = "";
+            if($data['date_start'] != "" && $data['date_start'] != "" && isset($data['date_start'] ) && isset($data['date_end'] ) ) 
+                $condition .= "AND news_file_date between "."'".$data['date_start']."'"." and "."'".$data['date_end']."'" ;
+            else
+                $condition .="AND DATE(news_file_date) = DATE(NOW())";
+
+            $sql = "SELECT * FROM News WHERE TRUE ".$condition." ORDER BY news_file_date ASC";
+            $query = $db->query($sql);  
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
             $db = null;
@@ -56,12 +62,11 @@ class NewsModel
 
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("INSERT INTO news (`newsID`,`news_title`,`news_description`,`news_file`,`news_file_date`) VALUES (:newsid,:newstitle,:newsdescription,:newsfile,:newsdate)");
+            $sql = $db->prepare("INSERT INTO news (`newsID`,`news_title`,`news_description`,`news_file`,`news_file_date`) VALUES (:newsid,:newstitle,:newsdescription,:newsfile,NOW())");
             $sql->bindParam(':newsid', $data['newsID']);
             $sql->bindParam(':newstitle', $data['news_title']);
             $sql->bindParam(':newsdescription', $data['news_description']);
             $sql->bindParam(':newsfile', $data['news_file']);
-            $sql->bindParam(':newsdate', $data['news_file_date']);
             $sql->execute();
             
             $db = null;
