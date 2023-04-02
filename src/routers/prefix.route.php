@@ -2,6 +2,11 @@
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 require './src/controllers/prefix.controller.php';
+$app->post('/prefix/generatePrefixLastCode', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $prefix = new PrefixController();
+    echo json_encode($prefix->generatePrefixLastCode($data));
+});
 $app->post('/prefix/getPrefixBy', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
     $prefix = new PrefixController();

@@ -1,7 +1,29 @@
 <?php
 class NewsModel
 {
-    //แสดงผู้ใช้
+    
+    public function generateNewsLastCode($data)
+    {
+        try {
+            $db = new db();
+            $db = $db->connect();
+            $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(newsID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM News WHERE newsID LIKE '".$data['code']."%'";
+            $query = $db->query($sql);
+            $result = $query->fetchObject();
+            $db = null;
+            
+            if (!$result) {
+                return ['data'=>[],'require'=>false];
+            } else {
+                return ['data' => $result,'require'=>true];
+            }
+        } catch (PDOException $e) {
+            // show error message as Json format
+            return ['data'=>[],'require'=>false];
+            $db = null;
+        }
+    }
+
     public function getNewsBy($data)
     {
         try {

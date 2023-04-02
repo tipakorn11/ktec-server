@@ -2,6 +2,11 @@
 require './src/models/news.model.php';
 
 class NewsController {
+    public function generateNewsLastCode($data){
+        $news_model = new NewsModel();
+        $data = ['code'=>'N'.date("Y"),'digit'=>2];
+        return $news_model->generateNewsLastCode($data);
+    }
     public function getNewsBy($data){
         $news_model = new NewsModel();
         return $news_model->getNewsBy($data);

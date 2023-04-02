@@ -1,7 +1,29 @@
 <?php
 class PositionModel
 {
-    //แสดงผู้ใช้
+    
+    public function generatePositionLastCode($data)
+    {
+        try {
+            $db = new db();
+            $db = $db->connect();
+            $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(positionID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM position WHERE positionID LIKE '".$data['code']."%'";
+            $query = $db->query($sql);
+            $result = $query->fetchObject();
+            $db = null;
+            
+            if (!$result) {
+                return ['data'=>[],'require'=>false];
+            } else {
+                return ['data' => $result,'require'=>true];
+            }
+        } catch (PDOException $e) {
+            // show error message as Json format
+            return ['data'=>[],'require'=>false];
+            $db = null;
+        }
+    }
+
     public function getPositionBy()
     {
         try {
@@ -104,6 +126,11 @@ class PositionModel
         try {
             $db = new db();
             $db = $db->connect();
+
+            $permission = $db->prepare("DELETE FROM permission WHERE positionID = :pid; ");
+            $permission->bindParam(':pid', $data['positionID']);
+            $permission->execute();
+
             $sql = $db->prepare("DELETE FROM position WHERE positionID = :pid; ");
             $sql->bindParam(':pid', $data['positionID']);
             $sql->execute();

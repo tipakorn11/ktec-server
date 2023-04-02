@@ -2,6 +2,11 @@
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 require './src/controllers/news.controller.php';
+$app->post('/news/generateNewsLastCode', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $news = new NewsController();
+    echo json_encode($news->generateNewsLastCode($data));
+});
 $app->post('/news/getNewsBy', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
     $news = new NewsController();

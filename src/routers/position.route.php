@@ -2,6 +2,11 @@
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 require './src/controllers/position.controller.php';
+$app->post('/position/generatePositionLastCode', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $position = new PositionController();
+    echo json_encode($position->generatePositionLastCode($data));
+});
 $app->post('/position/getPositionBy', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
     $position = new PositionController();

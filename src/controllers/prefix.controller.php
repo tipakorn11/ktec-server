@@ -2,6 +2,11 @@
 require './src/models/prefix.model.php';
 
 class PrefixController {
+    public function generatePrefixLastCode($data){
+        $prefix_model = new PrefixModel();
+        $data = ['code'=>'PF'.date("Y"),'digit'=>2];
+        return $prefix_model->generatePrefixLastCode($data);
+    }
     public function getPrefixBy($data){
         $prefix_model = new PrefixModel();
         return $prefix_model->getPrefixBy($data);

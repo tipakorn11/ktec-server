@@ -49,7 +49,7 @@ class PermissionModel
                                     LEFT JOIN menu ON menu.menuID = tb.menuID 
                                     WHERE positionID = :position_id ");
                 $sql->bindParam(':position_id',$data['positionID']);
-                $sql->execute();      
+                $sql->execute();
                 $permission = $sql->fetchAll(PDO::FETCH_OBJ);
                return ['permission'=> $permission ,'require' => true ];
         } catch (PDOException $e) {
