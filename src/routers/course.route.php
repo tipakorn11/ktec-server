@@ -2,6 +2,11 @@
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 require './src/controllers/course.controller.php';
+$app->post('/course/generateCourseLastCode', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $course = new CourseController();
+    echo json_encode($course->generateCourseLastCode($data));
+});
 $app->post('/course/getCourseBy', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
     $course = new CourseController();

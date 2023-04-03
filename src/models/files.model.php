@@ -1,16 +1,11 @@
 <?php
 class FilesModel
 {
-    //แสดงผู้ใช้
     public function generateFileLastCode($data)
     {
         try {
-            //print_r($data);
-            // Get DB Object
             $db = new db();
-            // connect to DB
             $db = $db->connect();
-            // query
             $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(fileID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM tb_file WHERE fileID LIKE '".$data['code']."%'";
             $query = $db->query($sql);
             $result = $query->fetchObject();
@@ -22,7 +17,6 @@ class FilesModel
                 return ['data' => $result,'require'=>true];
             }
         } catch (PDOException $e) {
-            // show error message as Json format
             return ['data'=>[],'require'=>false];
             $db = null;
         }
@@ -30,11 +24,8 @@ class FilesModel
     public function getFilesBy($data)
     {
         try {
-            // Get DB Object
             $db = new db();
-            // connect to DB
             $db = $db->connect();
-            // query
             $condition = "";
             if(isset($data['file_status']) ) $condition .= "AND file_status = "."'".$data['file_status']."'"."";
             if(isset($data['personalID']) ) $condition .= "AND tb_file.personalID = "."'".$data['personalID']."'"."";
@@ -67,11 +58,8 @@ class FilesModel
     public function getFilesByid($data)
     {
         try {
-            // Get DB Object
             $db = new db();
-            // connect to DB
             $db = $db->connect();
-            // query
             $sql = $db -> prepare("SELECT *,
                                     IFNULL((SELECT CONCAT(thai_fname, ' ', thai_lname) FROM tb_user WHERE tb_user.personalID = tb_file.personalID), NULL) AS fullname
                                     FROM tb_file WHERE fileID = :fid");
@@ -129,7 +117,7 @@ class FilesModel
             $db = $db->connect();
             $sql = $db->prepare("UPDATE tb_file 
                                 SET file_name = :filesname , 
-                                    file_date =  NOW() ,
+                                    file_date_upload =  NOW() ,
                                     file_pdf = :filepdf,
                                     file_status = :filestatus
                                 WHERE fileID = :fileid; ");
@@ -161,7 +149,8 @@ class FilesModel
             $sql = $db->prepare("UPDATE tb_file 
                                 SET file_status = :filestatus , 
                                     file_note = :filesnote ,
-                                    file_date = NOW() 
+                                    file_date_upload = NOW(),
+                                    file_date_handle = NOW()
                                 WHERE fileID = :fileid ");
             $sql->bindParam(':fileid', $data['fileID']);
             $sql->bindParam(':filestatus', $data['file_status']);

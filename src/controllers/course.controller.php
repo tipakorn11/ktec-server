@@ -2,6 +2,11 @@
 require './src/models/course.model.php';
 
 class CourseController {
+    public function generateCourseLastCode($data){
+        $course_model = new CourseModel();
+        $data = ['code'=>'C'.date("Y"),'digit'=>2];
+        return $course_model->generateCourseLastCode($data);
+    }
     public function getCourseBy($data){
         $course_model = new CourseModel();
         return $course_model->getCourseBy($data);

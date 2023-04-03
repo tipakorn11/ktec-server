@@ -11,13 +11,10 @@ class UserModel
             $sql = "SELECT *
                     FROM tb_user 
                     WHERE TRUE";
-           
             
             $query = $db->query($sql);
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
-            echo $data;
-           
             $db = null;
             if (!$result) {
                 return ['data' => [], 'require' => false];
