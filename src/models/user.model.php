@@ -160,7 +160,55 @@ class UserModel
             return ['data' => 'catch', 'require' => false];
         }
     }
+    public function updateUserByid($data)
+    {
+        try {
 
+            $db = new db();
+            $db = $db->connect();
+            $sql = $db->prepare("UPDATE tb_user 
+                                SET citizenID = :pname ,
+                                    thai_fname = :thaifname,
+                                    thai_lname = :thailname,
+                                    eng_fname = :engfname,
+                                    eng_lname = :englname,
+                                    nationality = :nationality,
+                                    bdate = :bdate,
+                                    ffname = :ffname,
+                                    flname = :flname,
+                                    mfname = :mfname,
+                                    mlname = :mlname,
+                                    courseID = :cid,
+                                    prefixID = :pid
+                                WHERE personalID = :personalid ; ");
+            $sql->bindParam(':pid', $data['prefixID']);
+            $sql->bindParam(':thaifname', $data['thai_fname']);
+            $sql->bindParam(':thailname', $data['thai_lname']);
+            $sql->bindParam(':engfname', $data['eng_fname']);
+            $sql->bindParam(':englname', $data['eng_lname']);
+            $sql->bindParam(':nationality', $data['nationality']);
+            $sql->bindParam(':bdate', $data['bdate']);
+            $sql->bindParam(':ffname', $data['ffname']);
+            $sql->bindParam(':flname', $data['flname']);
+            $sql->bindParam(':mfname', $data['mfname']);
+            $sql->bindParam(':mlname', $data['mlname']);
+            $sql->bindParam(':cid', $data['courseID']);
+            $sql->bindParam(':pid', $data['prefixID']);
+            $sql->execute();
+            $db = null;
+            if (!$sql) {
+
+                return ['data' => [], 'require' => false];
+            } else {
+
+                return ['data' => [], 'require' => true];
+            }
+        } catch (PDOException $e) {
+            $db = null;
+            echo $e->getMessage();
+            return ['data' => [], 'require' => false];
+        }
+    }
     public function checkLogin($data)
     {
         try {
@@ -211,7 +259,7 @@ class UserModel
         }
     }
     
-    public function updateUserByid($data)
+    public function updateUserByCitizenID($data)
     {
         try {
 
