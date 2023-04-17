@@ -36,7 +36,7 @@ class NewsModel
             if($data['date_start'] != "" && $data['date_start'] != "" && isset($data['date_start'] ) && isset($data['date_end'] ) ) 
                 $condition .= "AND news_file_date between "."'".$data['date_start']."'"." and "."'".$data['date_end']."'" ;
             else
-                $condition .="AND DATE(news_file_date) = DATE(NOW())";
+                $condition .="AND news_file_date BETWEEN DATE_SUB(NOW(), INTERVAL 5 DAY) AND NOW()";
 
             $sql = "SELECT * FROM News WHERE TRUE ".$condition." ORDER BY news_file_date ASC";
             $query = $db->query($sql);  

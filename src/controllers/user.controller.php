@@ -31,6 +31,10 @@ class UserController {
         $user = new UserModel();
         return $user->updateUserByid($data);
     }
+    public function updateUserByCitizenid($data){
+        $user = new UserModel();
+        return $user->updateUserByCitizenid($data);
+    }
 
     public function deleteUserByid($data){
         $user = new UserModel();

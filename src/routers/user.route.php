@@ -33,6 +33,11 @@ $app->post('/user/updateUserByid', function(Request $request, Response $response
     $user = new UserController();
     echo json_encode($user->updateUserByid($data));
 });
+$app->post('/user/updateUserByCitizenid', function(Request $request, Response $response){
+    $data = $request->getParsedBody();
+    $user = new UserController();
+    echo json_encode($user->updateUserByCitizenid($data));
+});
 
 $app->post('/user/deleteuserByID',function(Request $request,Response $response){
     $data = $request->getParsedBody();
