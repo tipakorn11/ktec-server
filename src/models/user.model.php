@@ -239,7 +239,7 @@ class UserModel
             if(isset($data['educations'])){
                 foreach($data['educations'] as $education){
                     $sql = $db->prepare("UPDATE education 
-                                            educational_name = :educational_name,
+                                        SET educational_name = :educational_name,
                                             educational_major = :educational_major,
                                             institution_name = :institution_name,
                                             graduate_country = :graduate_country,
@@ -254,6 +254,7 @@ class UserModel
                                         $sql->bindParam(':graduate_date',$education['graduate_date']);
                     $sql->execute();
                     }
+                    
             }
             //---------------TRAINING------------------//
             //---------------TRAINING------------------//
@@ -264,9 +265,7 @@ class UserModel
             if(isset($data['trainings'])){
                 foreach($data['trainings'] as $training){
                     $sql = $db->prepare("UPDATE training_certificate 
-                                        SET trainningID = :tid,
-                                            personalID = :pid,
-                                            training_topic = :training_topic,
+                                        SET training_topic = :training_topic,
                                             training_agency = :training_agency,
                                             country_agency = :country_agency,
                                             training_date = :training_date,
@@ -275,6 +274,7 @@ class UserModel
                                         $sql->bindParam(':tid',$training['trainningID']);
                                         $sql->bindParam(':pid',$training['personalID']);
                                         $sql->bindParam(':training_topic',$training['training_topic']);
+                                        $sql->bindParam(':country_agency',$training['country_agency']);
                                         $sql->bindParam(':training_agency',$training['training_agency']);
                                         $sql->bindParam(':training_date',$training['training_date']);
                                         $sql->bindParam(':training_end_date',$training['training_end_date']);
@@ -296,7 +296,7 @@ class UserModel
                                             tl_date = :tl_date,
                                             tl_since = :tl_since,
                                             tl_teaching_subject = :tl_teaching_subject
-                                        WHERE personalID = :pid AND educational_typeID = :eid; ");
+                                        WHERE personalID = :pid AND teacher_license = :tlid; ");
                                         $sql->bindParam(':tlid',$teacherl['teacher_license']);
                                         $sql->bindParam(':pid',$teacherl['personalID']);
                                         $sql->bindParam(':tl_licenseNO',$teacherl['tl_licenseNO']);
@@ -314,21 +314,21 @@ class UserModel
 
             if(isset($data['teacher_permission_licenses'])){
                 foreach($data['teacher_permission_licenses'] as $teacherpl){
-                    $sql = $db->prepare("UPDATE teacher_license 
-                                        SET teacher_permission_licenseID = :tplid,
-                                            personalID = :pid,
-                                            teacher_permissionNO = :tl_licenseNO,
-                                            tpl_date = :tl_date,
-                                            tpl_since = :tl_since,
-                                            tpl_currently_work = :tl_teaching_subject,
-                                            tpl_teacher_type = :tl_teaching_subject,
-                                            tpl_district = :tl_teaching_subject,
-                                            tpl_country = :tl_teaching_subject,
+                    $sql = $db->prepare("UPDATE teacher_permission_license 
+                                        SET teacher_permissionNO = :teacher_permissionNO,
+                                            tpl_date = :tpl_date,
+                                            tpl_since = :tpl_since,
+                                            tpl_currently_work = :tpl_currently_work,
+                                            tpl_teacher_type = :tpl_teacher_type,
+                                            tpl_district = :tpl_district,
+                                            tpl_country = :tpl_country,
                                             tpl_teaching_subject = :tpl_teaching_subject,
-                                            tpl_dischargeNO = :tl_teaching_subject,
-                                            tpl_discharge_date = :tl_teaching_subject,
-                                            tpl_discharge_since = :tl_teaching_subject
-                                        WHERE personalID = :pid AND educational_typeID = :eid; ");
+                                            tpl_dischargeNO = :tpl_dischargeNO,
+                                            tpl_discharge_date = :tpl_discharge_date,
+                                            tpl_discharge_since = :tpl_discharge_since,
+                                            tpl_discharge_motive = :tpl_discharge_motive,
+                                            tpl_educational = :tpl_educational
+                                        WHERE personalID = :pid AND teacher_permission_licenseID = :tplid; ");
                                         $sql->bindParam(':tplid',$teacherpl['teacher_permission_licenseID']);
                                         $sql->bindParam(':pid',$teacherpl['personalID']);
                                         $sql->bindParam(':teacher_permissionNO',$teacherpl['teacher_permissionNO']);
@@ -342,6 +342,8 @@ class UserModel
                                         $sql->bindParam(':tpl_dischargeNO',$teacherpl['tpl_dischargeNO']);
                                         $sql->bindParam(':tpl_discharge_date',$teacherpl['tpl_discharge_date']);
                                         $sql->bindParam(':tpl_discharge_since',$teacherpl['tpl_discharge_since']);
+                                        $sql->bindParam(':tpl_discharge_motive',$teacherpl['tpl_discharge_motive']);
+                                        $sql->bindParam(':tpl_educational',$teacherpl['tpl_educational']);
                     $sql->execute();
                 }
             }
@@ -353,18 +355,17 @@ class UserModel
 
             if(isset($data['ht_licenses'])){
                     foreach($data['ht_licenses'] as $ht_license){
-                        $sql = $db->prepare("UPDATE teacher_license 
-                                            SET HT_licenseID = :htid,
-                                                personalID = :pid,
-                                                HT_licenseNO = :HT_licenseNO,
+                        $sql = $db->prepare("UPDATE ht_license 
+                                            SET HT_licenseNO = :HT_licenseNO,
                                                 HT_date = :HT_date,
                                                 HT_date_since = :HT_date_since,
                                                 HT_dischargeNO = :HT_dischargeNO,
                                                 HT_discharge_date = :HT_discharge_date,
                                                 HT_discharge_since = :HT_discharge_since,
                                                 HT_discharge_motive = :HT_discharge_motive
-                                            WHERE personalID = :pid AND educational_typeID = :eid; ");
+                                            WHERE personalID = :pid AND HT_licenseID = :htid; ");
                                             $sql->bindParam(':htid',$ht_license['HT_licenseID']);
+                                            $sql->bindParam(':HT_licenseNO',$ht_license['HT_licenseNO']);
                                             $sql->bindParam(':pid',$ht_license['personalID']);
                                             $sql->bindParam(':HT_date',$ht_license['HT_date']);
                                             $sql->bindParam(':HT_date_since',$ht_license['HT_date_since']);
@@ -383,10 +384,8 @@ class UserModel
 
             if(isset($data['apps'])){
                 foreach($data['apps'] as $app){
-                    $sql = $db->prepare("UPDATE teacher_license 
-                                        SET appointmentID = :aid,
-                                            personalID = :pid,
-                                            appointmentNO = :appointmentNO,
+                    $sql = $db->prepare("UPDATE appointment 
+                                        SET appointmentNO = :appointmentNO,
                                             app_date = :app_date,
                                             app_since = :app_since,
                                             app_currently_work = :app_currently_work,
@@ -399,7 +398,7 @@ class UserModel
                                             app_discharge_date = :app_discharge_date,
                                             app_discharge_since = :app_discharge_since,
                                             app_discharge_motive = :app_discharge_motive
-                                        WHERE personalID = :pid AND educational_typeID = :eid; ");
+                                        WHERE personalID = :pid AND appointmentID = :aid; ");
                                         $sql->bindParam(':aid',$app['appointmentID']);
                                         $sql->bindParam(':pid',$app['personalID']);
                                         $sql->bindParam(':appointmentNO',$app['appointmentNO']);
@@ -427,8 +426,7 @@ class UserModel
             if(isset($data['portfolios'])){
                 foreach($data['portfolios'] as $portfolio){
                     $sql = $db->prepare("UPDATE portfolio 
-                                        SET portfolioID = :portfolioid,
-                                            personalID = :pid,
+                                        SET
                                             portfolio_name = :portfolio_name
                                         WHERE personalID = :pid AND portfolioID = :portfolioid; ");
                                         $sql->bindParam(':tlid',$portfolio['portfolioID']);
@@ -444,10 +442,8 @@ class UserModel
             //---------------INSIGNIA------------------//
             if(isset($data['insignias'])){
                 foreach($data['insignias'] as $insignia){
-                    $sql = $db->prepare("UPDATE portfolio 
-                                        SET insigniaID = :iid,
-                                            personalID = :pid,
-                                            insignia_name = :insignia_name
+                    $sql = $db->prepare("UPDATE insignia 
+                                        SET insignia_name = :insignia_name
                                         WHERE personalID = :pid AND portfolioID = :portfolioid; ");
                                         $sql->bindParam(':iid',$insignia['insigniaID']);
                                         $sql->bindParam(':pid',$insignia['personalID']);
@@ -462,10 +458,8 @@ class UserModel
             //---------------PUNISHMENT------------------//
             if(isset($data['punishments'])){
                     foreach($data['punishments'] as $punishment){
-                        $sql = $db->prepare("UPDATE portfolio 
-                                            SET punishmentID = :pmid,
-                                                personalID = :pid,
-                                                punishment_name = :punishment_name
+                        $sql = $db->prepare("UPDATE punishment 
+                                            SET punishment_name = :punishment_name
                                             WHERE personalID = :pid AND portfolioID = :portfolioid; ");
                                             $sql->bindParam(':pmid',$punishment['punishmentID']);
                                             $sql->bindParam(':pid',$punishment['personalID']);
