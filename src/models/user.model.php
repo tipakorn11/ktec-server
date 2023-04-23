@@ -1,6 +1,25 @@
 <?php
 class UserModel
 {
+    public function generateUserLastCode($data){
+        try {
+            $db = new db();
+            $db = $db->connect();
+            $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(prefixID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM tb_user WHERE personalID LIKE '".$data['code']."%'";
+            $query = $db->query($sql);
+            $result = $query->fetchObject();
+            $db = null;
+            
+            if (!$result) {
+                return ['data'=>[],'require'=>false];
+            } else {
+                return ['data' => $result,'require'=>true];
+            }
+        } catch (PDOException $e) {
+            return ['data'=>[],'require'=>false];
+            $db = null;
+        }
+    }
     //แสดงผู้ใช้
     public function getUserBy($data)
     {
@@ -161,11 +180,11 @@ class UserModel
     {
         try {
 
-            //---------------ADDRESS------------------//
-            //---------------ADDRESS------------------//
-            //---------------ADDRESS------------------//
-            //---------------ADDRESS------------------//
-            //---------------ADDRESS------------------//
+            //---------------USER------------------//
+            //---------------USER------------------//
+            //---------------USER------------------//
+            //---------------USER------------------//
+            //---------------USER------------------//
 
             $db = new db();
             $db = $db->connect();
@@ -290,14 +309,14 @@ class UserModel
             if(isset($data['teacher_licenses'])){
                 foreach($data['teacher_licenses'] as $teacherl){
                     $sql = $db->prepare("UPDATE teacher_license 
-                                        SET teacher_license = :tlid,
+                                        SET teacher_licenseID = :tlid,
                                             personalID = :pid,
                                             tl_licenseNO = :tl_licenseNO,
                                             tl_date = :tl_date,
                                             tl_since = :tl_since,
                                             tl_teaching_subject = :tl_teaching_subject
-                                        WHERE personalID = :pid AND teacher_license = :tlid; ");
-                                        $sql->bindParam(':tlid',$teacherl['teacher_license']);
+                                        WHERE personalID = :pid AND teacher_licenseID = :tlid; ");
+                                        $sql->bindParam(':tlid',$teacherl['teacher_licenseID']);
                                         $sql->bindParam(':pid',$teacherl['personalID']);
                                         $sql->bindParam(':tl_licenseNO',$teacherl['tl_licenseNO']);
                                         $sql->bindParam(':tl_date',$teacherl['tl_date']);
@@ -428,8 +447,8 @@ class UserModel
                     $sql = $db->prepare("UPDATE portfolio 
                                         SET
                                             portfolio_name = :portfolio_name
-                                        WHERE personalID = :pid AND portfolioID = :portfolioid; ");
-                                        $sql->bindParam(':tlid',$portfolio['portfolioID']);
+                                        WHERE personalID = :pid AND portfolioID = :portfolioID; ");
+                                        $sql->bindParam(':portfolioID',$portfolio['portfolioID']);
                                         $sql->bindParam(':pid',$portfolio['personalID']);
                                         $sql->bindParam(':portfolio_name',$portfolio['portfolio_name']);
                     $sql->execute();
@@ -444,8 +463,8 @@ class UserModel
                 foreach($data['insignias'] as $insignia){
                     $sql = $db->prepare("UPDATE insignia 
                                         SET insignia_name = :insignia_name
-                                        WHERE personalID = :pid AND portfolioID = :portfolioid; ");
-                                        $sql->bindParam(':iid',$insignia['insigniaID']);
+                                        WHERE personalID = :pid AND insigniaID = :insigniaID; ");
+                                        $sql->bindParam(':insigniaID',$insignia['insigniaID']);
                                         $sql->bindParam(':pid',$insignia['personalID']);
                                         $sql->bindParam(':insignia_name',$insignia['insignia_name']);
                     $sql->execute();
@@ -460,7 +479,7 @@ class UserModel
                     foreach($data['punishments'] as $punishment){
                         $sql = $db->prepare("UPDATE punishment 
                                             SET punishment_name = :punishment_name
-                                            WHERE personalID = :pid AND portfolioID = :portfolioid; ");
+                                            WHERE personalID = :pid AND punishmentID = :pmid; ");
                                             $sql->bindParam(':pmid',$punishment['punishmentID']);
                                             $sql->bindParam(':pid',$punishment['personalID']);
                                             $sql->bindParam(':punishment_name',$punishment['punishment_name']);
@@ -480,87 +499,245 @@ class UserModel
         }
     }
     
-    public function updateUserAddressByid($data)
+    public function insertUser($data)
     {
         try {
-
+            //---------------USER------------------//
+            //---------------USER------------------//
+            //---------------USER------------------//
+            //---------------USER------------------//
+            //---------------USER------------------//
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("UPDATE useraddress 
-                                SET addressID = :aid ,
-                                    personalID = :pid,
-                                    village_no = :villageno,
-                                    house_no = :houseno,
-                                    alley = :alley,
-                                    road = :road,
-                                    sub_district = :subdistrict,
-                                    sub_area = :subarea,
-                                    postal_code = :postalcode,
-                                    tel = :tel,
-                                WHERE personalID = :pid ; ");
-            $sql->bindParam(':pid', $data['addressID']);
-            $sql->bindParam(':personalid', $data['personalid']);
-            $sql->bindParam(':villageno', $data['village_no']);
-            $sql->bindParam(':houseno', $data['house_no']);
-            $sql->bindParam(':alley', $data['alley']);
-            $sql->bindParam(':road', $data['road']);
-            $sql->bindParam(':subdistrict', $data['sub_district']);
-            $sql->bindParam(':subdistrict', $data['sub_district']);
-            $sql->bindParam(':subarea', $data['sub_area']);
-            $sql->bindParam(':postalcode', $data['postal_code']);
-            $sql->bindParam(':tel', $data['tel']);
-            $sql->execute();
-            
-            $db = null;
-            if (!$sql) {
-
-                return ['data' => [], 'require' => false];
-            } else {
-
-                return ['data' => [], 'require' => true];
-            }
-        } catch (PDOException $e) {
-            $db = null;
-            echo $e->getMessage();
-            return ['data' => [], 'require' => false];
-        }
-    }
-    public function updateUserEducationByid($data)
-    {
-        try {
-
-            $db = new db();
-            $db = $db->connect();
-            $sql = $db->prepare("UPDATE education 
-                                SET citizenID = :pname ,
-                                    thai_fname = :thaifname,
-                                    thai_lname = :thailname,
-                                    eng_fname = :engfname,
-                                    eng_lname = :englname,
-                                    nationality = :nationality,
-                                    bdate = :bdate,
-                                    ffname = :ffname,
-                                    flname = :flname,
-                                    mfname = :mfname,
-                                    mlname = :mlname,
-                                    courseID = :cid,
-                                    prefixID = :pid
-                                WHERE personalID = :personalid ; ");
-            $sql->bindParam(':pid', $data['prefixID']);
+            $sql = $db->prepare("INSERT INTO tb_user 
+            (personalID, citizenID, thai_fname, thai_lname, eng_fname, eng_lname, nationality, bdate, father_fname, father_lname, mother_fname, mother_lname, courseID, prefixID)
+            VALUES
+            (:personalid, :citizenid, :thaifname, :thailname, :engfname, :englname, :nationality, :bdate, :ffname, :flname, :mfname, :mlname, :cid, :pid);");
+            $sql->bindParam(':personalid', $data['personalID']);
+            $sql->bindParam(':citizenid', $data['citizenID']);
             $sql->bindParam(':thaifname', $data['thai_fname']);
             $sql->bindParam(':thailname', $data['thai_lname']);
             $sql->bindParam(':engfname', $data['eng_fname']);
             $sql->bindParam(':englname', $data['eng_lname']);
             $sql->bindParam(':nationality', $data['nationality']);
             $sql->bindParam(':bdate', $data['bdate']);
-            $sql->bindParam(':ffname', $data['ffname']);
-            $sql->bindParam(':flname', $data['flname']);
-            $sql->bindParam(':mfname', $data['mfname']);
-            $sql->bindParam(':mlname', $data['mlname']);
+            $sql->bindParam(':ffname', $data['father_fname']);
+            $sql->bindParam(':flname', $data['father_lname']);
+            $sql->bindParam(':mfname', $data['mother_fname']);
+            $sql->bindParam(':mlname', $data['mother_lname']);
             $sql->bindParam(':cid', $data['courseID']);
             $sql->bindParam(':pid', $data['prefixID']);
             $sql->execute();
+            //---------------ADDRESS------------------//
+            //---------------ADDRESS------------------//
+            //---------------ADDRESS------------------//
+            //---------------ADDRESS------------------//
+            //---------------ADDRESS------------------//
+            $sql = $db->prepare("INSERT INTO useraddress 
+            (addressID, personalID, village_no, house_no, alley, road, sub_district, sub_area, country, postal_code, tel)
+            VALUES
+            (:aid, :pid, :villageno, :houseno, :alley, :road, :subdistrict, :subarea, :country, :postalcode, :tel);");
+            $sql->bindParam(':aid', $data['addressID']);
+            $sql->bindParam(':pid', $data['personalID']);
+            $sql->bindParam(':villageno', $data['village_no']);
+            $sql->bindParam(':houseno', $data['house_no']);
+            $sql->bindParam(':alley', $data['alley']);
+            $sql->bindParam(':road', $data['road']);
+            $sql->bindParam(':subdistrict', $data['sub_district']);
+            $sql->bindParam(':subarea', $data['sub_area']);
+            $sql->bindParam(':country', $data['country']);
+            $sql->bindParam(':postalcode', $data['postal_code']);
+            $sql->bindParam(':tel', $data['tel']);
+            $sql->execute();
+            //---------------EDUCATIONS------------------//
+            //---------------EDUCATIONS------------------//
+            //---------------EDUCATIONS------------------//
+            //---------------EDUCATIONS------------------//
+            //---------------EDUCATIONS------------------//
+
+            if(isset($data['educations'])){
+                foreach($data['educations'] as $education){
+                    $sql = $db->prepare("INSERT INTO education 
+                                        (personalID, educational_typeID, educational_name, educational_major, institution_name, graduate_country, graduate_date)
+                                        VALUES
+                                        (:pid, :eid, :educational_name, :educational_major, :institution_name, :graduate_country, :graduate_date);");
+                    $sql->bindParam(':eid',$education['educational_typeID']);
+                    $sql->bindParam(':pid',$education['personalID']);
+                    $sql->bindParam(':educational_name',$education['educational_name']);
+                    $sql->bindParam(':educational_major',$education['educational_major']);
+                    $sql->bindParam(':institution_name',$education['institution_name']);
+                    $sql->bindParam(':graduate_country',$education['graduate_country']);
+                    $sql->bindParam(':graduate_date',$education['graduate_date']);
+                    $sql->execute();
+                }
+            }
+            //---------------TRAINNING------------------//
+            //---------------TRAINNING------------------//
+            //---------------TRAINNING------------------//
+            //---------------TRAINNING------------------//
+            //---------------TRAINNING------------------//
             
+            if(isset($data['trainings'])){
+                foreach($data['trainings'] as $training){
+                    $sql = $db->prepare("INSERT INTO training_certificate 
+                                        (personalID, training_topic, training_agency, country_agency, training_date, training_end_date) 
+                                        VALUES (:pid, :training_topic, :training_agency, :country_agency, :training_date, :training_end_date); ");
+                    $sql->bindParam(':pid',$training['personalID']);
+                    $sql->bindParam(':training_topic',$training['training_topic']);
+                    $sql->bindParam(':country_agency',$training['country_agency']);
+                    $sql->bindParam(':training_agency',$training['training_agency']);
+                    $sql->bindParam(':training_date',$training['training_date']);
+                    $sql->bindParam(':training_end_date',$training['training_end_date']);
+                    $sql->execute();
+                }
+            }
+            //---------------TEACHER_LICENSE------------------//
+            //---------------TEACHER_LICENSE------------------//
+            //---------------TEACHER_LICENSE------------------//
+            //---------------TEACHER_LICENSE------------------//
+            //---------------TEACHER_LICENSE------------------//
+
+            if(isset($data['teacher_licenses'])){
+                foreach($data['teacher_licenses'] as $teacherl){
+                    $sql = $db->prepare("INSERT INTO teacher_license 
+                                            (teacher_licenseID, personalID, tl_licenseNO, tl_date, tl_since, tl_teaching_subject) 
+                                            VALUES 
+                                            (:tlid, :pid, :tl_licenseNO, :tl_date, :tl_since, :tl_teaching_subject)");
+                    $sql->bindParam(':tlid',$teacherl['teacher_licenseID']);
+                    $sql->bindParam(':pid',$teacherl['personalID']);
+                    $sql->bindParam(':tl_licenseNO',$teacherl['tl_licenseNO']);
+                    $sql->bindParam(':tl_date',$teacherl['tl_date']);
+                    $sql->bindParam(':tl_since',$teacherl['tl_since']);
+                    $sql->bindParam(':tl_teaching_subject',$teacherl['tl_teaching_subject']);
+                    $sql->execute();
+                }
+            }
+            //---------------TEACHER_PERMISSION_LICENSE------------------//
+            //---------------TEACHER_PERMISSION_LICENSE------------------//
+            //---------------TEACHER_PERMISSION_LICENSE------------------//
+            //---------------TEACHER_PERMISSION_LICENSE------------------//
+            //---------------TEACHER_PERMISSION_LICENSE------------------//
+
+            if(isset($data['teacher_permission_licenses'])){
+                foreach($data['teacher_permission_licenses'] as $teacherpl){
+                    $sql = $db->prepare("INSERT INTO teacher_permission_license 
+                                        (personalID, teacher_permissionNO, tpl_date, tpl_since, tpl_currently_work, tpl_teacher_type, tpl_district, tpl_country, tpl_teaching_subject, tpl_dischargeNO, tpl_discharge_date, tpl_discharge_since, tpl_discharge_motive, tpl_educational)
+                                        VALUES
+                                        (:pid, :teacher_permissionNO, :tpl_date, :tpl_since, :tpl_currently_work, :tpl_teacher_type, :tpl_district, :tpl_country, :tpl_teaching_subject, :tpl_dischargeNO, :tpl_discharge_date, :tpl_discharge_since, :tpl_discharge_motive, :tpl_educational)
+                                        ");
+                    $sql->bindParam(':pid',$teacherpl['personalID']);
+                    $sql->bindParam(':teacher_permissionNO',$teacherpl['teacher_permissionNO']);
+                    $sql->bindParam(':tpl_date',$teacherpl['tpl_date']);
+                    $sql->bindParam(':tpl_since',$teacherpl['tpl_since']);
+                    $sql->bindParam(':tpl_currently_work',$teacherpl['tpl_currently_work']);
+                    $sql->bindParam(':tpl_teacher_type',$teacherpl['tpl_teacher_type']);
+                    $sql->bindParam(':tpl_district',$teacherpl['tpl_district']);
+                    $sql->bindParam(':tpl_country',$teacherpl['tpl_country']);
+                    $sql->bindParam(':tpl_teaching_subject',$teacherpl['tpl_teaching_subject']);
+                    $sql->bindParam(':tpl_dischargeNO',$teacherpl['tpl_dischargeNO']);
+                    $sql->bindParam(':tpl_discharge_date',$teacherpl['tpl_discharge_date']);
+                    $sql->bindParam(':tpl_discharge_since',$teacherpl['tpl_discharge_since']);
+                    $sql->bindParam(':tpl_discharge_motive',$teacherpl['tpl_discharge_motive']);
+                    $sql->bindParam(':tpl_educational',$teacherpl['tpl_educational']);
+                    $sql->execute();
+                }
+            }
+            //---------------HEADTECHER_LICENSE------------------//
+            //---------------HEADTECHER_LICENSE------------------//
+            //---------------HEADTECHER_LICENSE------------------//
+            //---------------HEADTECHER_LICENSE------------------//
+            //---------------HEADTECHER_LICENSE------------------//
+            
+            if(isset($data['ht_licenses'])){
+                foreach($data['ht_licenses'] as $ht_license){
+                    $sql = $db->prepare("INSERT INTO ht_license 
+                                            (HT_licenseNO, personalID, HT_date, HT_date_since, HT_dischargeNO, HT_discharge_date, HT_discharge_since, HT_discharge_motive)
+                                            VALUES (:HT_licenseNO, :pid, :HT_date, :HT_date_since, :HT_dischargeNO, :HT_discharge_date, :HT_discharge_since, :HT_discharge_motive)");
+                    $sql->bindParam(':HT_licenseNO',$ht_license['HT_licenseNO']);
+                    $sql->bindParam(':pid',$ht_license['personalID']);
+                    $sql->bindParam(':HT_date',$ht_license['HT_date']);
+                    $sql->bindParam(':HT_date_since',$ht_license['HT_date_since']);
+                    $sql->bindParam(':HT_dischargeNO',$ht_license['HT_dischargeNO']);
+                    $sql->bindParam(':HT_discharge_since',$ht_license['HT_discharge_since']);
+                    $sql->bindParam(':HT_discharge_date',$ht_license['HT_discharge_date']);
+                    $sql->bindParam(':HT_discharge_motive',$ht_license['HT_discharge_motive']);
+                    $sql->execute();
+                }
+            }
+            //---------------APPIONTMENT------------------//
+            //---------------APPIONTMENT------------------//
+            //---------------APPIONTMENT------------------//
+            //---------------APPIONTMENT------------------//
+            //---------------APPIONTMENT------------------//
+
+            if(isset($data['apps'])){
+                foreach($data['apps'] as $app){
+                    $sql = $db->prepare("INSERT INTO appointment (personalID, appointmentNO, app_date, app_since, app_currently_work, app_teacher_type, app_district, app_country, app_educational, app_teaching_subject, app_dischargeNO, app_discharge_date, app_discharge_since, app_discharge_motive)
+                                         VALUES (:pid, :appointmentNO, :app_date, :app_since, :app_currently_work, :app_teacher_type, :app_district, :app_country, :app_educational, :app_teaching_subject, :app_dischargeNO, :app_discharge_date, :app_discharge_since, :app_discharge_motive);");
+                    $sql->bindParam(':pid',$app['personalID']);
+                    $sql->bindParam(':appointmentNO',$app['appointmentNO']);
+                    $sql->bindParam(':app_date',$app['app_date']);
+                    $sql->bindParam(':app_since',$app['app_since']);
+                    $sql->bindParam(':app_currently_work',$app['app_currently_work']);
+                    $sql->bindParam(':app_teacher_type',$app['app_teacher_type']);
+                    $sql->bindParam(':app_district',$app['app_district']);
+                    $sql->bindParam(':app_country',$app['app_country']);
+                    $sql->bindParam(':app_educational',$app['app_educational']);
+                    $sql->bindParam(':app_teaching_subject',$app['app_teaching_subject']);
+                    $sql->bindParam(':app_dischargeNO',$app['app_dischargeNO']);
+                    $sql->bindParam(':app_discharge_date',$app['app_discharge_date']);
+                    $sql->bindParam(':app_discharge_since',$app['app_discharge_since']);
+                    $sql->bindParam(':app_discharge_motive',$app['app_discharge_motive']);
+                    $sql->execute();
+                }
+            }
+            //---------------PORRTFOLIO------------------//
+            //---------------PORRTFOLIO------------------//
+            //---------------PORRTFOLIO------------------//
+            //---------------PORRTFOLIO------------------//
+            //---------------PORRTFOLIO------------------//
+
+            if(isset($data['portfolios'])){
+                foreach($data['portfolios'] as $portfolio){
+                    $sql = $db->prepare("INSERT INTO portfolio (personalID, portfolio_name) 
+                                         VALUES (:pid, :portfolio_name); ");
+                    $sql->bindParam(':pid',$portfolio['personalID']);
+                    $sql->bindParam(':portfolio_name',$portfolio['portfolio_name']);
+                    $sql->execute();
+                }
+            }
+            //---------------INSIGNIA------------------//
+            //---------------INSIGNIA------------------//
+            //---------------INSIGNIA------------------//
+            //---------------INSIGNIA------------------//
+            //---------------INSIGNIA------------------//
+
+            if(isset($data['insignias'])){
+                foreach($data['insignias'] as $insignia){
+                    $sql = $db->prepare("INSERT INTO insignia 
+                                          (personalID, insignia_name) 
+                                          VALUES (:pid, :insignia_name);");
+                    $sql->bindParam(':pid', $insignia['personalID']);
+                    $sql->bindParam(':insignia_name', $insignia['insignia_name']);
+                    $sql->execute();
+                }
+            } 
+            //---------------PUNISHMENT------------------//
+            //---------------PUNISHMENT------------------//
+            //---------------PUNISHMENT------------------//
+            //---------------PUNISHMENT------------------//
+            //---------------PUNISHMENT------------------//
+            if(isset($data['punishments'])){
+                foreach($data['punishments'] as $punishment){
+                    $sql = $db->prepare("INSERT INTO punishment (personalID, punishment_name)
+                                         VALUES (:pid, :punishment_name)");
+                    $sql->bindParam(':pid', $punishment['personalID']);
+                    $sql->bindParam(':punishment_name', $punishment['punishment_name']);
+                    $sql->execute();
+                }
+            }
+            
+
             $db = null;
             if (!$sql) {
 
@@ -573,6 +750,7 @@ class UserModel
             $db = null;
             echo $e->getMessage();
             return ['data' => [], 'require' => false];
+
         }
     }
     

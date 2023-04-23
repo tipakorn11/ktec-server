@@ -7,6 +7,11 @@ $app->post('/user/getUserBy', function (Request $request, Response $response) {
     $user = new userController();
     echo json_encode($user->getUserBy($data));
 });
+$app->post('/user/generateUserLastCode', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $user = new userController();
+    echo json_encode($user->generateUserLastCode($data));
+});
 
 $app->post('/user/getUserByid', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
@@ -32,6 +37,11 @@ $app->post('/user/updateUserByid', function(Request $request, Response $response
     $data = $request->getParsedBody();
     $user = new UserController();
     echo json_encode($user->updateUserByid($data));
+});
+$app->post('/user/insertUser', function(Request $request, Response $response){
+    $data = $request->getParsedBody();
+    $user = new UserController();
+    echo json_encode($user->insertUser($data));
 });
 $app->post('/user/updateUserByCitizenid', function(Request $request, Response $response){
     $data = $request->getParsedBody();
