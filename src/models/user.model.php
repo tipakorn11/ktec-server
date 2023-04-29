@@ -5,7 +5,7 @@ class UserModel
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(prefixID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM tb_user WHERE personalID LIKE '".$data['code']."%'";
+            $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(personalID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM tb_user WHERE personalID LIKE '".$data['code']."%'";
             $query = $db->query($sql);
             $result = $query->fetchObject();
             $db = null;
@@ -27,12 +27,60 @@ class UserModel
             $db = new db();
             $db = $db->connect();
             // query
-            $sql = "SELECT *
-                    FROM tb_user 
-                    WHERE TRUE";
+            $sql = "SELECT *,
+            IFNULL((SELECT course_name from course where course.courseID = tb_user.courseID),NULL) as course_name ,
+            IFNULL((SELECT prefix_name from prefix where prefix.prefixID = tb_user.prefixID),NULL) as prefix_name 
+            FROM tb_user WHERE TRUE";
             
             $query = $db->query($sql);
             $result = $query->fetchAll(PDO::FETCH_OBJ);
+            $count = count($result);
+            $db = null;
+            if (!$result) {
+                return ['data' => [], 'require' => false];
+            } else {
+                return ['data' => $result, 'require' => true,'total'=>$count];
+            }
+        } catch (PDOException $e) {
+            $db = null;
+            return ['data' => [], 'require' => false];
+        }
+    }
+    public function getUserCitizenid($data)
+    {
+        try {
+            $db = new db();
+            $db = $db->connect();
+            // query
+            $sql = $db -> prepare("SELECT citizenID
+                    FROM tb_user 
+                    WHERE citizenID = :citizenID");
+            $sql->bindParam(':citizenID',$data['citizenID']);
+            $sql->execute();
+            $result = $sql->fetchAll(PDO::FETCH_OBJ);
+            $count = count($result);
+            $db = null;
+            if (!$result) {
+                return ['data' => [], 'require' => false];
+            } else {
+                return ['data' => $result, 'require' => true,'total'=>$count];
+            }
+        } catch (PDOException $e) {
+            $db = null;
+            return ['data' => [], 'require' => false];
+        }
+    }
+    public function getUserByUsername($data)
+    {
+        try {
+            $db = new db();
+            $db = $db->connect();
+            $sql = $db -> prepare("SELECT username
+                    FROM tb_user 
+                    WHERE username = :username");
+            $sql->bindParam(':username',$data['username']);
+            $sql->execute();
+            $result = $sql->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);
             $db = null;
             if (!$result) {
@@ -549,6 +597,18 @@ class UserModel
             $sql->bindParam(':postalcode', $data['postal_code']);
             $sql->bindParam(':tel', $data['tel']);
             $sql->execute();
+            //---------------USER_POSITION------------------//
+            //---------------USER_POSITION------------------//
+            //---------------USER_POSITION------------------//
+            //---------------USER_POSITION------------------//
+            $sql = $db->prepare("INSERT INTO user_position 
+            (positionID, personalID)
+            VALUES
+            (:positionID, :personalID);");
+            $sql->bindParam(':positionID', $data['positionID']);
+            $sql->bindParam(':personalID', $data['personalID']);
+            $sql->execute();
+
             //---------------EDUCATIONS------------------//
             //---------------EDUCATIONS------------------//
             //---------------EDUCATIONS------------------//
@@ -808,20 +868,17 @@ class UserModel
     {
         try {
 
-            // Get DB Object
             $db = new db();
-            // connect to DB
             $db = $db->connect();
-            // query
             $password = md5($data['password']);
-            //echo $password;
-            $sql = $db->prepare("INSERT INTO tb_user (`personalID`,`username`,`password`) VALUES (:personalID,:username,:pass)");
-            $sql->bindParam(':personalID', $data['personalID']);
+            $sql = $db->prepare("UPDATE tb_user SET `username`=:username, `password`=:pass 
+                                WHERE `citizenID`=:citizenID");
+            $sql->bindParam(':citizenID', $data['citizenID']);
             $sql->bindParam(':username', $data['username']);
             $sql->bindParam(':pass', $password);
-           
+            
             $sql->execute();
-
+            
             $db = null;
             if (!$sql) {
 
@@ -843,6 +900,12 @@ class UserModel
         try {
             $db = new db();
             $db = $db->connect();
+            $sql = $db->prepare("DELETE FROM useraddress WHERE personalID = :pid; ");
+            $sql->bindParam(':pid', $data['personalID']);
+            $sql->execute();
+            $sql = $db->prepare("DELETE FROM user_position WHERE personalID = :pid; ");
+            $sql->bindParam(':pid', $data['personalID']);
+            $sql->execute();
             $sql = $db->prepare("DELETE FROM tb_user WHERE personalID = :pid; ");
             $sql->bindParam(':pid', $data['personalID']);
             $sql->execute();

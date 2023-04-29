@@ -7,6 +7,16 @@ $app->post('/user/getUserBy', function (Request $request, Response $response) {
     $user = new userController();
     echo json_encode($user->getUserBy($data));
 });
+$app->post('/user/getUserByUsername', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $user = new userController();
+    echo json_encode($user->getUserByUsername($data));
+});
+$app->post('/user/getUserCitizenid', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $user = new userController();
+    echo json_encode($user->getUserCitizenid($data));
+});
 $app->post('/user/generateUserLastCode', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
     $user = new userController();
@@ -49,8 +59,8 @@ $app->post('/user/updateUserByCitizenid', function(Request $request, Response $r
     echo json_encode($user->updateUserByCitizenid($data));
 });
 
-$app->post('/user/deleteuserByID',function(Request $request,Response $response){
+$app->post('/user/deleteUserByid',function(Request $request,Response $response){
     $data = $request->getParsedBody();
     $user = new UserController();
-    echo json_encode($user->deleteuserByID($data));
+    echo json_encode($user->deleteUserByid($data));
 });

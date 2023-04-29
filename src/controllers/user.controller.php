@@ -11,6 +11,14 @@ class UserController {
         $user_model = new UserModel();
         return $user_model->getUserBy($data);
     }
+    public function getUserByUsername($data){
+        $user_model = new UserModel();
+        return $user_model->getUserByUsername($data);
+    }
+    public function getUserCitizenid($data){
+        $user_model = new UserModel();
+        return $user_model->getUserCitizenid($data);
+    }
     
     public function auth($data){
         $user_model = new UserModel();
