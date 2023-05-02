@@ -19,9 +19,9 @@ class FilesController {
     public function insertFiles($data)
     {
         $files_model = new FilesModel();
+        
         return $files_model->insertFiles($data);
 
-     
     }
     public function updateFiles($data)
     {

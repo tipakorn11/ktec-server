@@ -85,14 +85,13 @@ class FilesModel
 
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("INSERT INTO tb_file (`fileID`,`personalID`,`file_name`,`file_status`,`file_date_upload`,`file_pdf`) 
-                                    VALUES (:fileid,:pid,:filesname,:filestatus,NOW(),:filepdf)");
+            $fileID = $data['fileID'];
+            $sql = $db->prepare("INSERT INTO tb_file (`fileID`,`personalID`,`file_name`,`file_status`,`file_date_upload`) 
+                                    VALUES (:fileid,:pid,:filesname,:filestatus,NOW())");
             $sql->bindParam(':fileid', $data['fileID']);
             $sql->bindParam(':pid', $data['personalID']);
             $sql->bindParam(':filesname', $data['file_name']);
             $sql->bindParam(':filestatus', $data['file_status']);
-            $sql->bindParam(':filepdf', $data['file_pdf']);
-
             $sql->execute();
             
             $db = null;
