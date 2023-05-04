@@ -38,7 +38,7 @@ class NewsModel
             else
                 $condition .="AND news_file_date BETWEEN DATE_SUB(NOW(), INTERVAL 5 DAY) AND NOW()";
 
-            $sql = "SELECT * FROM News WHERE TRUE ".$condition." ORDER BY news_file_date ASC";
+            $sql = "SELECT * FROM News WHERE TRUE ".$condition." ORDER BY news_file_date DESC";
             $query = $db->query($sql);  
             $result = $query->fetchAll(PDO::FETCH_OBJ);
             $count = count($result);

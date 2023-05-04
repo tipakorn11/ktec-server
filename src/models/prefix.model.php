@@ -6,18 +6,18 @@ class PrefixModel
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(prefixID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM prefix WHERE prefixID LIKE '".$data['code']."%'";
+            $sql = "SELECT CONCAT('" . $data['code'] . "', LPAD(IFNULL(MAX(CAST(SUBSTRING(prefixID,'" . (strlen($data['code']) + 1) . "','" . $data['digit'] . "') AS SIGNED)),0) + 1,'" . $data['digit'] . "',0)) AS last_code FROM prefix WHERE prefixID LIKE '" . $data['code'] . "%'";
             $query = $db->query($sql);
             $result = $query->fetchObject();
             $db = null;
-            
+
             if (!$result) {
-                return ['data'=>[],'require'=>false];
+                return ['data' => [], 'require' => false];
             } else {
-                return ['data' => $result,'require'=>true];
+                return ['data' => $result, 'require' => true];
             }
         } catch (PDOException $e) {
-            return ['data'=>[],'require'=>false];
+            return ['data' => [], 'require' => false];
             $db = null;
         }
     }
@@ -40,18 +40,17 @@ class PrefixModel
             $db = null;
             return ['data' => [], 'require' => false];
         }
-        
     }
     public function getPrefixByid($data)
     {
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = $db -> prepare("SELECT * FROM prefix WHERE prefixID = :pid");
-            $sql->bindParam(':pid',$data['prefixID']);
+            $sql = $db->prepare("SELECT * FROM prefix WHERE prefixID = :pid");
+            $sql->bindParam(':pid', $data['prefixID']);
             $sql->execute();
             $result = $sql->fetchAll(PDO::FETCH_OBJ);
-            
+
             $db = null;
             if (!$result) {
                 return ['data' => [], 'require' => false];
@@ -63,7 +62,7 @@ class PrefixModel
             return ['data' => 'catch', 'require' => false];
         }
     }
-    
+
     public function insertPrefix($data)
     {
         try {
@@ -74,7 +73,7 @@ class PrefixModel
             $sql->bindParam(':pid', $data['prefixID']);
             $sql->bindParam(':pname', $data['prefix_name']);
             $sql->execute();
-            
+
             $db = null;
             if (!$sql) {
 
@@ -120,14 +119,18 @@ class PrefixModel
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("DELETE FROM prefix WHERE prefixID = :pid; ");
+            $sql = $db->prepare("DELETE FROM prefix
+                                    WHERE prefixID = :pid
+                                    AND NOT EXISTS (
+                                        SELECT 1 FROM tb_user WHERE prefixID = :pid
+                                    );");
             $sql->bindParam(':pid', $data['prefixID']);
             $sql->execute();
             $db = null;
             if (!$sql) {
-                return [ 'require' => false];
+                return ['require' => false];
             } else {
-                return [ 'require' => true];
+                return ['require' => true];
             }
         } catch (PDOException $e) {
             $db = null;

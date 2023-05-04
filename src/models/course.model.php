@@ -1,25 +1,25 @@
 <?php
 class CourseModel
 {
-    
+
     public function generateCourseLastCode($data)
     {
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = "SELECT CONCAT('".$data['code']."', LPAD(IFNULL(MAX(CAST(SUBSTRING(courseID,'".(strlen($data['code'])+1)."','".$data['digit']."') AS SIGNED)),0) + 1,'".$data['digit']."',0)) AS last_code FROM course WHERE courseID LIKE '".$data['code']."%'";
+            $sql = "SELECT CONCAT('" . $data['code'] . "', LPAD(IFNULL(MAX(CAST(SUBSTRING(courseID,'" . (strlen($data['code']) + 1) . "','" . $data['digit'] . "') AS SIGNED)),0) + 1,'" . $data['digit'] . "',0)) AS last_code FROM course WHERE courseID LIKE '" . $data['code'] . "%'";
             $query = $db->query($sql);
             $result = $query->fetchObject();
             $db = null;
-            
+
             if (!$result) {
-                return ['data'=>[],'require'=>false];
+                return ['data' => [], 'require' => false];
             } else {
-                return ['data' => $result,'require'=>true];
+                return ['data' => $result, 'require' => true];
             }
         } catch (PDOException $e) {
             // show error message as Json format
-            return ['data'=>[],'require'=>false];
+            return ['data' => [], 'require' => false];
             $db = null;
         }
     }
@@ -46,18 +46,17 @@ class CourseModel
             $db = null;
             return ['data' => [], 'require' => false];
         }
-        
     }
     public function getCourseByid($data)
     {
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = $db -> prepare("SELECT * FROM course WHERE courseID = :cid");
-            $sql->bindParam(':cid',$data['courseID']);
+            $sql = $db->prepare("SELECT * FROM course WHERE courseID = :cid");
+            $sql->bindParam(':cid', $data['courseID']);
             $sql->execute();
             $result = $sql->fetchAll(PDO::FETCH_OBJ);
-            
+
             $db = null;
             if (!$result) {
                 return ['data' => [], 'require' => false];
@@ -69,7 +68,7 @@ class CourseModel
             return ['data' => 'catch', 'require' => false];
         }
     }
-    
+
     public function insertCourse($data)
     {
         try {
@@ -80,7 +79,7 @@ class CourseModel
             $sql->bindParam(':cid', $data['courseID']);
             $sql->bindParam(':cname', $data['course_name']);
             $sql->execute();
-            
+
             $db = null;
             if (!$sql) {
 
@@ -126,14 +125,17 @@ class CourseModel
         try {
             $db = new db();
             $db = $db->connect();
-            $sql = $db->prepare("DELETE FROM course WHERE courseID = :cid; ");
+            $sql = $db->prepare("DELETE FROM course
+                                    WHERE courseID = :cid
+                                    AND NOT EXISTS (
+                                        SELECT 1 FROM tb_user WHERE courseID = :cid); ");
             $sql->bindParam(':cid', $data['courseID']);
             $sql->execute();
             $db = null;
             if (!$sql) {
-                return [ 'require' => false];
+                return ['require' => false];
             } else {
-                return [ 'require' => true];
+                return ['require' => true];
             }
         } catch (PDOException $e) {
             $db = null;

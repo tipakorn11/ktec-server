@@ -93,7 +93,6 @@ class UserModel
             return ['data' => [], 'require' => false];
         }
     }
-    //logging in 
     public function auth($data)
     {
         try {
