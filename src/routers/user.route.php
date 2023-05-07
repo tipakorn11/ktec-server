@@ -64,3 +64,46 @@ $app->post('/user/deleteUserByid',function(Request $request,Response $response){
     $user = new UserController();
     echo json_encode($user->deleteUserByid($data));
 });
+$app->post('/user/insertImgDir', function (Request $request,Response $response) {
+    $data = $request->getParsedBody();
+    $check = true;
+    $db = new db();
+    $db = $db->connect();
+    $img_name = base64_encode($data['img']);
+    if (isset($_FILES)) {
+        try {
+            $sql = $db->prepare("UPDATE tb_user SET img = :img WHERE personalID = :nid;");
+            $sql->bindParam(':nid', $data['personalID']);
+            $sql->bindParam(':img', $img_name);
+            $sql->execute();
+        } catch (Exception $e) {
+            $check = false;
+            echo  $e ;
+        }
+        $db = null;
+        if ($check) {
+            echo json_encode(['data' => [], 'require' => true]);
+        } else {
+            echo json_encode(['data' => [], 'require' => false]);
+        }
+    }
+});
+$app->post('/user/downloadFile', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+
+    $directory = $this->get('upload_directory');
+    $directory .= $data['personalID'] . '/img.jpg';
+    $response->withHeader('Content-Type', 'application/force-download')
+        ->withHeader('Content-Type', 'application/octet-stream')
+        ->withHeader('Content-Type', 'application/download')
+        ->withHeader('Content-Description', 'File Transfer')
+        ->withHeader('Content-Transfer-Encoding', 'binary')
+        ->withHeader('Content-Disposition', 'attachment; filename="' . basename($directory) . '"')
+        ->withHeader('Expires', '0')
+        ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+        ->withHeader('Pragma', 'public');
+
+    readfile($directory);
+    return $response;
+    
+});

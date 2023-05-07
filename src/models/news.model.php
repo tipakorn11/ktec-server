@@ -33,7 +33,7 @@ class NewsModel
             $db = $db->connect();
             // query 
             $condition = "";
-            if($data['date_start'] != "" && $data['date_start'] != "" && isset($data['date_start'] ) && isset($data['date_end'] ) ) 
+            if($data['date_start'] != "" && $data['date_end'] != "" && isset($data['date_start'] ) && isset($data['date_end'] ) ) 
                 $condition .= "AND news_file_date between "."'".$data['date_start']."'"." and "."'".$data['date_end']."'" ;
             else
                 $condition .="AND news_file_date BETWEEN DATE_SUB(NOW(), INTERVAL 5 DAY) AND NOW()";
