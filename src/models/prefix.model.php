@@ -126,11 +126,16 @@ class PrefixModel
                                     );");
             $sql->bindParam(':pid', $data['prefixID']);
             $sql->execute();
+
+            $sql = $db->prepare("SELECT 1 FROM tb_user WHERE prefixID = :pid; ");
+            $sql->bindParam(':pid', $data['prefixID']);
+            $sql->execute();
+            $result = $sql->fetchAll(PDO::FETCH_OBJ);
             $db = null;
             if (!$sql) {
-                return ['require' => false];
+                return ['data' => [],'require' => false];
             } else {
-                return ['require' => true];
+                return ['data' => $result,'require' => true];
             }
         } catch (PDOException $e) {
             $db = null;
